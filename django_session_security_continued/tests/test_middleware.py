@@ -6,8 +6,8 @@ from django import test
 from django.test.client import Client
 
 from django_session_security_continued.tests.test_base import SettingsMixin
-from session_security.utils import get_last_activity
-from session_security.utils import set_last_activity
+from django_session_security_continued.utils import get_last_activity
+from django_session_security_continued.utils import set_last_activity
 
 
 class MiddlewareTestCase(SettingsMixin, test.TestCase):

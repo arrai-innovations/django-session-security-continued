@@ -97,7 +97,7 @@ TEMPLATE_DIRS = [
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(PROJECT_ROOT, "./../session_security/tests/project/templates"),
+    os.path.join(PROJECT_ROOT, "./../django_session_security_continued/tests/project/templates"),
     os.path.join(PROJECT_ROOT, "templates"),
 ]
 
@@ -130,7 +130,7 @@ MIDDLEWARE = (
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "session_security.middleware.SessionSecurityMiddleware",
+    "django_session_security_continued.middleware.SessionSecurityMiddleware",
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -147,7 +147,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.messages.context_processors.messages",
 )
 
-ROOT_URLCONF = "session_security.tests.project.urls"
+ROOT_URLCONF = "django_session_security_continued.tests.project.urls"
 
 LOGIN_URL = "/admin/"
 LOGOUT_URL = "/admin/logout/"
@@ -165,7 +165,7 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     # Uncomment the next line to enable the admin:
     "django.contrib.admin",
-    "session_security",
+    "django_session_security_continued",
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

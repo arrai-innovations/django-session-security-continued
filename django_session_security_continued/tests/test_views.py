@@ -5,8 +5,17 @@ from django import test
 from django.test.client import Client
 from unittest_data_provider import data_provider
 
-from session_security import settings
-from session_security.utils import set_last_activity
+from django_session_security_continued import settings
+from django_session_security_continued.utils import set_last_activity
+
+
+def ping_provider():
+    return (
+        (1, 4, "1"),
+        (3, 2, "2"),
+        (5, 5, "5"),
+        (12, 14, '"logout"', False),
+    )
 
 
 class ViewsTestCase(test.TestCase):
@@ -20,14 +29,6 @@ class ViewsTestCase(test.TestCase):
         self.client.get("/admin/")
         response = self.client.get("/session_security/ping/?idleFor=81")
         self.assertEqual(response.content, b'"logout"')
-
-    def ping_provider(self):
-        return (
-            (1, 4, "1"),
-            (3, 2, "2"),
-            (5, 5, "5"),
-            (12, 14, '"logout"', False),
-        )
 
     @data_provider(ping_provider)
     def test_ping(self, server, client, expected, authenticated=True):

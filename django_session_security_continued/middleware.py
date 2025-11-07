@@ -2,11 +2,11 @@
 SessionSecurityMiddleware is the heart of the security that this application
 attemps to provide.
 
-To install this middleware, add to your ``settings.MIDDLEWARE_CLASSES``::
+To install this middleware, add to ``settings.MIDDLEWARE``::
 
-    'session_security.middleware.SessionSecurityMiddleware'
+    'django_session_security_continued.middleware.SessionSecurityMiddleware'
 
-Make sure that it is placed **after** authentication middlewares.
+Place it after authentication middleware.
 """
 
 from datetime import datetime

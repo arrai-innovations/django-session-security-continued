@@ -7,11 +7,11 @@ session_security_ping
 To install this url, include it in ``urlpatterns`` definition in ``urls.py``,
 ie::
 
-    urlpatterns = patterns('',
+    urlpatterns = [
         # ....
-        url(r'session_security/', include('session_security.urls')),
+        path("session_security/", include("django_session_security_continued.urls")),
         # ....
-    )
+    ]
 
 """
 
