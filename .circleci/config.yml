@@ -2,7 +2,7 @@ version: 2.1
 orbs:
     lintinator: arrai/lintinator@2.1.0
     pip-audit: arrai/pip-audit@1.0.3
-    pytest: arrai/pytest@dev:503
+    pytest: arrai/pytest@10.0.0
 executors:
     python39:
         docker:
@@ -14,7 +14,6 @@ workflows:
                   name: pytest-39
                   executor: python39
                   context: arrai-global
-                  env_type: uv
                   pytest_args: --cov
                   filters:
                       branches:
@@ -24,7 +23,6 @@ workflows:
                   name: pytest-39-no-badge
                   executor: python39
                   context: arrai-global
-                  env_type: uv
                   pytest_args: --cov
                   create_badges: false
                   filters:
@@ -36,7 +34,6 @@ workflows:
                   executor: pytest/python310
                   resource_class: small
                   context: arrai-global
-                  env_type: uv
                   pytest_args: -m "not selenium"
                   build_coverage: false
                   filters:
@@ -46,6 +43,52 @@ workflows:
             - pytest/pytest:
                   name: pytest-310-no-badge
                   executor: pytest/python310
+                  resource_class: small
+                  context: arrai-global
+                  pytest_args: -m "not selenium"
+                  build_coverage: false
+                  create_badges: false
+                  filters:
+                      branches:
+                          ignore:
+                              - main
+            - pytest/pytest_fixed_ip:
+                  name: pytest-311
+                  executor: pytest/python311
+                  resource_class: small
+                  context: arrai-global
+                  pytest_args: -m "not selenium"
+                  build_coverage: false
+                  filters:
+                      branches:
+                          only:
+                              - main
+            - pytest/pytest:
+                  name: pytest-311-no-badge
+                  executor: pytest/python311
+                  resource_class: small
+                  context: arrai-global
+                  pytest_args: -m "not selenium"
+                  build_coverage: false
+                  create_badges: false
+                  filters:
+                      branches:
+                          ignore:
+                              - main
+            - pytest/pytest_fixed_ip:
+                  name: pytest-312
+                  executor: pytest/python312
+                  resource_class: small
+                  context: arrai-global
+                  pytest_args: -m "not selenium"
+                  build_coverage: false
+                  filters:
+                      branches:
+                          only:
+                              - main
+            - pytest/pytest:
+                  name: pytest-312-no-badge
+                  executor: pytest/python312
                   resource_class: small
                   context: arrai-global
                   env_type: uv
