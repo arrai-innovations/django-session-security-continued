@@ -2,6 +2,8 @@ import json
 import os
 import uuid
 from dataclasses import dataclass
+from datetime import datetime
+from datetime import timedelta
 from pathlib import Path
 
 import pytest
@@ -69,6 +71,24 @@ def activity_window(settings):
         min_expire_after=expire_after,
         max_expire_after=expire_after * 1.5 + padding,
     )
+
+
+@pytest.fixture
+def frozen_time(monkeypatch):
+    class FrozenDateTime:
+        def __init__(self):
+            self._current = datetime.now()
+
+        def now(self):
+            return self._current
+
+        def advance(self, seconds: float):
+            self._current += timedelta(seconds=seconds)
+
+    freezer = FrozenDateTime()
+    monkeypatch.setattr("django_session_security_continued.middleware.datetime", freezer)
+    monkeypatch.setattr("django_session_security_continued.views.datetime", freezer)
+    return freezer
 
 
 JS_COVERAGE_ENV = "SESSION_SECURITY_JS_COVERAGE"
