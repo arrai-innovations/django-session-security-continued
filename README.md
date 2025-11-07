@@ -1,6 +1,12 @@
 # django-session-security-continued
 
-[![code style: ruff][]][ruff] [![code style: prettier][]][prettier] ![pytest status][] ![coverage status][] ![ruff status][] ![pip-audit status][]
+[![code style: ruff][]][ruff] [![code style: prettier][]][prettier] ![ruff status][] ![pip-audit status][]
+
+![python 3.9 status][]
+![python 3.10 status][]
+![python 3.11 status][]
+![python 3.12 status][]
+![coverage status][]
 
 <!--prettier-ignore-start-->
 <!--TOC-->
@@ -146,8 +152,11 @@ Contributions are welcome. Please fork the repository and create a pull request 
 [ruff]: https://docs.astral.sh/ruff/formatter/#style-guide
 [code style: prettier]: https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=for-the-badge
 [prettier]: https://github.com/prettier/prettier
-[pytest status]: https://docs.arrai.dev/django-session-security-continued/artifacts/main/pytest.svg
-[coverage status]: https://docs.arrai.dev/django-session-security-continued/artifacts/main/pytest.coverage.svg
-[ruff status]: https://docs.arrai.dev/django-session-security-continued/artifacts/main/ruff.svg
+[python 3.9 status]: https://docs.arrai.dev/dssc/artifacts/main/python_3.9.svg
+[python 3.10 status]: https://docs.arrai.dev/dssc/artifacts/main/python_3.10.svg
+[python 3.11 status]: https://docs.arrai.dev/dssc/artifacts/main/python_3.11.svg
+[python 3.12 status]: https://docs.arrai.dev/dssc/artifacts/main/python_3.12.svg
+[coverage status]: https://docs.arrai.dev/dssc/artifacts/main/python_3.9.coverage.svg
+[ruff status]: https://docs.arrai.dev/dssc/artifacts/main/ruff.svg
 [pipenv]: https://github.com/pypa/pipenv
-[pip-audit status]: https://docs.arrai.dev/django-session-security-continued/artifacts/main/pip-audit.svg
+[pip-audit status]: https://docs.arrai.dev/dssc/artifacts/main/pip-audit.svg
