@@ -2,7 +2,7 @@ version: 2.1
 orbs:
     lintinator: arrai/lintinator@2.1.0
     pip-audit: arrai/pip-audit@1.0.3
-    pytest: arrai/pytest@9.1.1
+    pytest: arrai/pytest@dev:501
 executors:
     python39:
         docker:
@@ -11,11 +11,19 @@ workflows:
     test:
         jobs:
             - pytest/pytest:
-                  name: pytest
+                  name: pytest-39
                   executor: python39
                   context: arrai-global
-                  pytest_args: --cov
                   env_type: uv
+                  pytest_args: --cov
+            - pytest/pytest:
+                  name: pytest-310
+                  executor: pytest/python310
+                  resource_class: small
+                  context: arrai-global
+                  env_type: uv
+                  pytest_args: -m "not selenium"
+                  build_coverage: false
     lint:
         jobs:
             - lintinator/lint_python_fixed_ip:
