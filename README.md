@@ -127,12 +127,13 @@ $ uv run pre-commit install
 
 ## Testing
 
-Chrome is required for the Selenium end-to-end tests (Selenium Manager will download the matching chromedriver automatically). To run the full suite with Django’s test runner:
+Chrome is required for the Selenium end-to-end tests (Selenium Manager will download the matching chromedriver automatically). Run the full suite with pytest:
 
 ```console
-$ export DJANGO_SETTINGS_MODULE=django_session_security_continued.tests.project.settings
-$ uv run python -m django test django_session_security_continued
+$ uv run pytest
 ```
+
+If Chrome isn’t available (or you only want the fast unit tests), skip the browser suite with `uv run pytest -k "not test_script"` until we add explicit markers.
 
 ## Contributing
 

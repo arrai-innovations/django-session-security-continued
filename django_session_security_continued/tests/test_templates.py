@@ -1,23 +1,17 @@
-from django.contrib.auth.models import User
-from django.test import TestCase
+import pytest
 
 
-class TemplateTests(TestCase):
-    def setUp(self):
-        self.user = User(username="test")
-        self.user.save()
+pytestmark = pytest.mark.django_db
 
-    def test_default(self):
-        """The default template should not include an entry for `returnToUrl`"""
-        self.client.force_login(self.user)
-        resp = self.client.get("/template/")
 
-        self.assertNotIn(b"returnToUrl", resp.content)
+def test_default_template_has_no_return_to_url(client, user):
+    client.force_login(user)
+    response = client.get("/template/")
+    assert b"returnToUrl" not in response.content
 
-    def test_setting(self):
-        """The default template should include an entry for `returnToUrl`"""
-        self.client.force_login(self.user)
-        with self.settings(SESSION_SECURITY_REDIRECT_TO_LOGOUT=True):
-            resp = self.client.get("/template/")
 
-        self.assertIn(b"returnToUrl", resp.content)
+def test_setting_enables_return_to_url(client, user, settings):
+    client.force_login(user)
+    settings.SESSION_SECURITY_REDIRECT_TO_LOGOUT = True
+    response = client.get("/template/")
+    assert b"returnToUrl" in response.content

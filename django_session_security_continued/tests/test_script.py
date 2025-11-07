@@ -1,67 +1,77 @@
 import datetime
 import time
 
+import pytest
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
 
-from django_session_security_continued.tests.test_base import BaseLiveServerTestCase
+
+pytestmark = pytest.mark.django_db
 
 
-class ScriptTestCase(BaseLiveServerTestCase):
-    def test_warning_shows_and_session_expires(self):
-        start = datetime.datetime.now()
+def _press_space(driver):
+    driver.find_element(By.TAG_NAME, "body").send_keys(Keys.SPACE)
 
-        for win in self.sel.window_handles:
-            self.sel.switch_to.window(win)
-            el = WebDriverWait(self.sel, self.max_warn_after).until(
-                expected_conditions.visibility_of_element_located((By.ID, "session_security_warning"))
-            )
-            assert el.is_displayed()
-        end = datetime.datetime.now()
-        delta = end - start
 
-        self.assertGreaterEqual(delta.seconds, self.min_warn_after)
-        self.assertLessEqual(delta.seconds, self.max_warn_after)
+def _iterate_windows(driver):
+    for handle in driver.window_handles:
+        driver.switch_to.window(handle)
+        yield
 
-        for win in self.sel.window_handles:
-            self.sel.switch_to.window(win)
-            el = WebDriverWait(self.sel, self.max_expire_after).until(
-                expected_conditions.visibility_of_element_located((By.ID, "id_password"))
-            )
-            assert el.is_displayed()
-            delta = datetime.datetime.now() - start
-            self.assertGreaterEqual(delta.seconds, self.min_expire_after)
-            self.assertLessEqual(delta.seconds, self.max_expire_after)
 
-    def test_activity_hides_warning(self):
-        time.sleep(6 * 0.7)
-        WebDriverWait(self.sel, self.max_warn_after).until(
+def test_warning_shows_and_session_expires(selenium_browser, activity_window):
+    start = datetime.datetime.now()
+
+    for _ in _iterate_windows(selenium_browser):
+        warning = WebDriverWait(selenium_browser, activity_window.max_warn_after).until(
             expected_conditions.visibility_of_element_located((By.ID, "session_security_warning"))
         )
+        assert warning.is_displayed()
 
-        self.press_space()
+    delta = datetime.datetime.now() - start
+    assert delta.seconds >= activity_window.min_warn_after
+    assert delta.seconds <= activity_window.max_warn_after
 
-        for win in self.sel.window_handles:
-            self.sel.switch_to.window(win)
-
-        el = WebDriverWait(self.sel, 20).until(
-            expected_conditions.invisibility_of_element_located((By.ID, "session_security_warning"))
+    for _ in _iterate_windows(selenium_browser):
+        password_field = WebDriverWait(selenium_browser, activity_window.max_expire_after).until(
+            expected_conditions.visibility_of_element_located((By.ID, "id_password"))
         )
-
-        assert not el.is_displayed()
-
-    def test_activity_prevents_warning(self):
-        time.sleep(self.min_warn_after * 0.7)
-        self.press_space()
-        start = datetime.datetime.now()
-        el = WebDriverWait(self.sel, self.max_warn_after).until(
-            expected_conditions.visibility_of_element_located((By.ID, "session_security_warning"))
-        )
-        assert el.is_displayed()
-
-        for win in self.sel.window_handles:
-            self.sel.switch_to.window(win)
-
+        assert password_field.is_displayed()
         delta = datetime.datetime.now() - start
-        self.assertGreaterEqual(delta.seconds, self.min_warn_after)
+        assert delta.seconds >= activity_window.min_expire_after
+        assert delta.seconds <= activity_window.max_expire_after
+
+
+def test_activity_hides_warning(selenium_browser, activity_window):
+    time.sleep(activity_window.min_warn_after * 0.7)
+    WebDriverWait(selenium_browser, activity_window.max_warn_after).until(
+        expected_conditions.visibility_of_element_located((By.ID, "session_security_warning"))
+    )
+
+    _press_space(selenium_browser)
+
+    for _ in _iterate_windows(selenium_browser):
+        pass
+
+    assert WebDriverWait(selenium_browser, 20).until(
+        expected_conditions.invisibility_of_element_located((By.ID, "session_security_warning"))
+    )
+
+
+def test_activity_prevents_warning(selenium_browser, activity_window):
+    time.sleep(activity_window.min_warn_after * 0.7)
+    _press_space(selenium_browser)
+    start = datetime.datetime.now()
+
+    warning = WebDriverWait(selenium_browser, activity_window.max_warn_after).until(
+        expected_conditions.visibility_of_element_located((By.ID, "session_security_warning"))
+    )
+    assert warning.is_displayed()
+
+    for _ in _iterate_windows(selenium_browser):
+        pass
+
+    delta = datetime.datetime.now() - start
+    assert delta.seconds >= activity_window.min_warn_after

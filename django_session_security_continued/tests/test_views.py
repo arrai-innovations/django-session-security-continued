@@ -1,50 +1,43 @@
 from datetime import datetime
 from datetime import timedelta
 
-from django import test
-from django.test.client import Client
-from unittest_data_provider import data_provider
+import pytest
 
-from django_session_security_continued import settings
 from django_session_security_continued.utils import set_last_activity
 
 
-def ping_provider():
-    return (
-        (1, 4, "1"),
-        (3, 2, "2"),
-        (5, 5, "5"),
-        (12, 14, '"logout"', False),
-    )
+pytestmark = pytest.mark.django_db
 
 
-class ViewsTestCase(test.TestCase):
-    fixtures = ["session_security_test_user"]
+PING_CASES = (
+    (1, 4, "1", True),
+    (3, 2, "2", True),
+    (5, 5, "5", True),
+    (12, 14, '"logout"', False),
+)
 
-    def setUp(self):
-        self.client = Client()
 
-    def test_anonymous(self):
-        self.client.logout()
-        self.client.get("/admin/")
-        response = self.client.get("/session_security/ping/?idleFor=81")
-        self.assertEqual(response.content, b'"logout"')
+def test_anonymous_ping(client):
+    client.logout()
+    client.get("/admin/")
+    response = client.get("/session_security/ping/?idleFor=81")
+    assert response.content == b'"logout"'
 
-    @data_provider(ping_provider)
-    def test_ping(self, server, client, expected, authenticated=True):
-        old_warn, old_expire = settings.WARN_AFTER, settings.EXPIRE_AFTER
-        settings.WARN_AFTER, settings.EXPIRE_AFTER = 5, 10
 
-        self.client.login(username="test", password="test")
-        self.client.get("/admin/")
+@pytest.mark.parametrize("server_idle, client_idle, expected, authenticated", PING_CASES)
+def test_ping(client, admin_user, settings, server_idle, client_idle, expected, authenticated):
+    settings.SESSION_SECURITY_WARN_AFTER = 5
+    settings.SESSION_SECURITY_EXPIRE_AFTER = 10
 
-        now = datetime.now()
-        session = self.client.session
-        set_last_activity(session, now - timedelta(seconds=server))
-        session.save()
-        response = self.client.get(f"/session_security/ping/?idleFor={client}")
+    assert client.login(username="test", password="test")
+    client.get("/admin/")
 
-        self.assertEqual(response.content, expected.encode("utf-8"))
-        self.assertEqual(authenticated, "_auth_user_id" in self.client.session)
+    now = datetime.now()
+    session = client.session
+    set_last_activity(session, now - timedelta(seconds=server_idle))
+    session.save()
 
-        settings.WARN_AFTER, settings.EXPIRE_AFTER = old_warn, old_expire
+    response = client.get(f"/session_security/ping/?idleFor={client_idle}")
+
+    assert response.content == expected.encode("utf-8")
+    assert ("_auth_user_id" in client.session) is authenticated

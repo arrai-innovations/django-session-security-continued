@@ -13,3 +13,4 @@ dist/
 build/
 *.mo
 .tox/
+.coverage
