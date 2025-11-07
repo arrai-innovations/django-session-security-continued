@@ -8,7 +8,6 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SECURITY_PASSIVE_URL_NAMES = ["ignore"]
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -94,20 +93,15 @@ STATICFILES_FINDERS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = "0yv5dmym_%#=60h@_9qcp@*^+(towd1xic3bp-3&amp;ntjf!p&amp;7)y"
 TEMPLATE_DIRS = [
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(PROJECT_ROOT, "./../django_session_security_continued/tests/project/templates"),
+    os.path.join(PROJECT_ROOT, "../django_session_security_continued/tests/project/templates"),
     os.path.join(PROJECT_ROOT, "templates"),
 ]
 
-# List of callables that know how to import templates from various sources.
-# TEMPLATES=['django.template.backends.django.DjangoTemplates']
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": TEMPLATE_DIRS,
-        "APP_DIRS": [TEMPLATE_DIRS],
+        "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -118,11 +112,6 @@ TEMPLATES = [
         },
     },
 ]
-TEMPLATE_LOADERS = (
-    "django.template.loaders.filesystem.Loader",
-    #'django.template.loaders.app_directories.Loader',
-    #'django.template.loaders.eggs.Loader',
-)
 
 MIDDLEWARE = (
     "django.middleware.common.CommonMiddleware",
@@ -131,20 +120,7 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django_session_security_continued.middleware.SessionSecurityMiddleware",
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
-
-
-TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.core.context_processors.request",
-    "django.core.context_processors.tz",
-    "django.contrib.messages.context_processors.messages",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 )
 
 ROOT_URLCONF = "django_session_security_continued.tests.project.urls"

@@ -11,8 +11,6 @@ Place it after authentication middleware.
 
 from datetime import datetime
 from datetime import timedelta
-
-import django
 from django.urls import Resolver404
 from django.urls import resolve
 from django.urls import reverse
@@ -100,12 +98,7 @@ class SessionSecurityMiddleware(MiddlewareMixin):
     def is_authenticated(self, request):
         # This is a separate method to allow for subclasses to override the
         # behavior, mostly.
-        if django.VERSION < (1, 10):
-            is_authenticated = request.user.is_authenticated()
-        else:
-            is_authenticated = request.user.is_authenticated
-
-        return is_authenticated
+        return request.user.is_authenticated
 
     def do_logout(self, request):
         # This is a separate method to allow for subclasses to override the
