@@ -2,7 +2,20 @@ version: 2.1
 orbs:
     lintinator: arrai/lintinator@2.1.0
     pip-audit: arrai/pip-audit@1.0.3
+    pytest: arrai/pytest@9.1.1
+executors:
+    python39:
+        docker:
+            - image: cimg/python:3.9-browsers
 workflows:
+    test:
+        jobs:
+            - pytest/pytest:
+                  name: pytest
+                  executor: python39
+                  context: arrai-global
+                  pytest_args: --cov
+                  env_type: uv
     lint:
         jobs:
             - lintinator/lint_python_fixed_ip:
