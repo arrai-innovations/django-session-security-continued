@@ -33,3 +33,10 @@ repos:
     hooks:
       - id: md-toc
         args: [-p, -s1, github, -u, -l6]
+
+  - repo: https://github.com/syntaqx/git-hooks
+    rev: v0.0.18
+    hooks:
+      - id: circleci-config-validate
+        stages: [pre-commit]
+        files: ^.circleci/config.yml$
