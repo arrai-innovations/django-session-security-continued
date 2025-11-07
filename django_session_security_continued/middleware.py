@@ -11,8 +11,11 @@ Place it after authentication middleware.
 
 from datetime import datetime
 from datetime import timedelta
+
 from django.conf import settings as django_settings
-from django.urls import Resolver404, resolve, reverse
+from django.urls import Resolver404
+from django.urls import resolve
+from django.urls import reverse
 from django.utils.deprecation import MiddlewareMixin
 
 from django_session_security_continued.utils import get_last_activity

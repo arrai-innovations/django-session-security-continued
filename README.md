@@ -139,6 +139,8 @@ $ uv run pytest
 
 If Chrome isn’t available (or you only want the fast unit tests), skip the browser suite with `uv run pytest -m "not selenium"`.
 
+Add extra breathing room to the Selenium waits (in CI) by exporting `SESSION_SECURITY_TIMEOUT_PADDING` (in seconds). For example, `SESSION_SECURITY_TIMEOUT_PADDING=5 uv run pytest -k selenium` gives each warning/expiry wait up to five additional seconds before failing.
+
 ### JavaScript coverage
 
 We ship a Vite + Istanbul build that instruments the client bundle and collects coverage from the Selenium run:

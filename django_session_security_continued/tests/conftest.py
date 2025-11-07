@@ -42,15 +42,32 @@ def authenticated_client(client, admin_user):
     return client
 
 
+TIMEOUT_PADDING_ENV = "SESSION_SECURITY_TIMEOUT_PADDING"
+
+
+def _timeout_padding_seconds() -> float:
+    raw_value = os.environ.get(TIMEOUT_PADDING_ENV)
+    if not raw_value:
+        return 0.0
+    try:
+        padding = float(raw_value)
+    except ValueError as exc:
+        raise RuntimeError(
+            f"{TIMEOUT_PADDING_ENV} must be a number representing seconds of extra wait time; got {raw_value!r}."
+        ) from exc
+    return max(0.0, padding)
+
+
 @pytest.fixture
 def activity_window(settings):
     expire_after = settings.SESSION_SECURITY_EXPIRE_AFTER
     warn_after = settings.SESSION_SECURITY_WARN_AFTER
+    padding = _timeout_padding_seconds()
     return ActivityWindow(
         min_warn_after=warn_after,
-        max_warn_after=expire_after * 0.9,
+        max_warn_after=expire_after * 0.9 + padding,
         min_expire_after=expire_after,
-        max_expire_after=expire_after * 1.5,
+        max_expire_after=expire_after * 1.5 + padding,
     )
 
 
@@ -66,12 +83,7 @@ def selenium_browser(live_server, admin_user, settings):
     if use_js_coverage:
         settings.SESSION_SECURITY_JS_PATH = JS_COVERAGE_STATIC_PATH
         coverage_bundle = (
-            REPO_ROOT
-            / "django_session_security_continued"
-            / "static"
-            / "session_security"
-            / "coverage"
-            / "script.js"
+            REPO_ROOT / "django_session_security_continued" / "static" / "session_security" / "coverage" / "script.js"
         )
         if not coverage_bundle.exists():
             raise RuntimeError(
@@ -98,8 +110,7 @@ def selenium_browser(live_server, admin_user, settings):
         )
         if not any("session_security/coverage/script.js" in src for src in script_sources):
             raise RuntimeError(
-                "Instrumented session security script was not loaded; "
-                "check SESSION_SECURITY_JS_PATH configuration."
+                "Instrumented session security script was not loaded; check SESSION_SECURITY_JS_PATH configuration."
             )
 
     yield driver
