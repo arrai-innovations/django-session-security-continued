@@ -19,7 +19,7 @@ It provides sensible defaults so you could start with just::
     {# Include the template that actually contains the modal dialog #}
     {% include 'session_security/dialog.html' %}
 
-    {# Load SessionSecurity javascript 'class', jquery should be loaded - by you - at this point #}
+    {# Load SessionSecurity javascript 'class' #}
     <script type="text/javascript" src="{% static 'session_security/script.js' %}"></script>
 
     {# Bootstrap a SessionSecurity instance as the sessionSecurity global variable #}

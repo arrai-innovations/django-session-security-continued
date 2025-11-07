@@ -1,206 +1,263 @@
-// Use 'yourlabs' as namespace.
-if (window.yourlabs == undefined) window.yourlabs = {};
+/* global window, document */
+(function (window, document) {
+    "use strict";
 
-// Session security constructor. These are the required options:
-//
-// - pingUrl: url to ping with last activity in this tab to get global last
-//   activity time,
-// - warnAfter: number of seconds of inactivity before warning,
-// - expireAfter: number of seconds of inactivity before expiring the session.
-//
-// Optional options:
-//
-// - confirmFormDiscard: message that will be shown when the user tries to
-//   leave a page with unsaved form data. Setting this will enable an
-//   onbeforeunload handler that doesn't block expire().
-// - events: a list of event types to watch for activity updates.
-// - returnToUrl: a url to redirect users to expired sessions to. If this is not defined we just reload the page
-yourlabs.SessionSecurity = function(options) {
-    // **HTML element** that should show to warn the user that his session will
-    // expire.
-    this.$warning = $('#session_security_warning');
+    if (typeof window.yourlabs === "undefined") {
+        window.yourlabs = {};
+    }
 
-    // Last recorded activity datetime.
-    this.lastActivity = new Date();
-
-    // Events that would trigger an activity
-    this.events = ['mousemove', 'scroll', 'keyup', 'click', 'touchstart', 'touchend', 'touchmove'];
-
-    // Set a default counter element
-    this.counterElementID = 'session_security_counter'
-
-    // Merge the options dict here.
-    $.extend(this, options);
-
-    // Bind activity events to update this.lastActivity.
-    var $document = $(document);
-    for(var i=0; i<this.events.length; i++) {
-        if ($document[this.events[i]]) {
-            $document[this.events[i]]($.proxy(this.activity, this));
+    function assign(target, source) {
+        if (!source) {
+            return target;
         }
+        Object.keys(source).forEach(function (key) {
+            target[key] = source[key];
+        });
+        return target;
     }
 
-    // Initialize timers.
-    this.apply()
-
-    if (this.confirmFormDiscard) {
-        window.onbeforeunload = $.proxy(this.onbeforeunload, this);
-        $document.on('change', ':input', $.proxy(this.formChange, this));
-        $document.on('submit', 'form', $.proxy(this.formClean, this));
-        $document.on('reset', 'form', $.proxy(this.formClean, this));
+    function buildUrl(url, params) {
+        var hasQuery = url.indexOf("?") !== -1;
+        var query = [];
+        for (var key in params) {
+            if (Object.prototype.hasOwnProperty.call(params, key)) {
+                query.push(encodeURIComponent(key) + "=" + encodeURIComponent(params[key]));
+            }
+        }
+        return url + (hasQuery ? "&" : "?") + query.join("&");
     }
-}
 
-yourlabs.SessionSecurity.prototype = {
-    // Called when there has been no activity for more than expireAfter
-    // seconds.
-    expire: function() {
+    function hasDirtyForms() {
+        return document.querySelector("form[data-dirty]") !== null;
+    }
+
+    function SessionSecurity(options) {
+        this.warning = document.getElementById("session_security_warning");
+        this.warningVisible = false;
+        this.lastActivity = new Date();
+        this.events = ["mousemove", "scroll", "keyup", "click", "touchstart", "touchend", "touchmove"];
+        this.counterElementID = "session_security_counter";
+        this.expired = false;
+        this.counterStarted = false;
+        this.timeout = null;
+        this.counterTimeout = null;
+
+        assign(this, options || {});
+
+        var self = this;
+        this.activityHandler = this.activity.bind(this);
+        this.events.forEach(function (eventName) {
+            document.addEventListener(eventName, self.activityHandler, true);
+        });
+
+        if (this.confirmFormDiscard) {
+            this.beforeUnloadHandler = this.onbeforeunload.bind(this);
+            window.addEventListener("beforeunload", this.beforeUnloadHandler);
+            document.addEventListener("change", function (event) {
+                self.formChange(event);
+            }, true);
+            document.addEventListener("submit", function (event) {
+                self.formClean(event);
+            }, true);
+            document.addEventListener("reset", function (event) {
+                self.formClean(event);
+            }, true);
+        }
+
+        this.apply();
+    }
+
+    SessionSecurity.prototype.expire = function () {
+        if (this.expired) {
+            return;
+        }
         this.expired = true;
-        if (this.returnToUrl !== undefined) {
+        if (typeof this.returnToUrl === "string" && this.returnToUrl.length > 0) {
             window.location.href = this.returnToUrl;
-        }
-        else {
+        } else {
             window.location.reload();
         }
-    },
+    };
 
-    // Called when there has been no activity for more than warnAfter
-    // seconds.
-    showWarning: function() {
-        this.$warning.fadeIn('slow');
-        this.$warning.attr('aria-hidden', 'false');
-        $('.session_security_modal').focus();
-    },
-
-    // Called to hide the warning, for example if there has been activity on
-    // the server side - in another browser tab.
-    hideWarning: function() {
-        this.$warning.hide();
-        this.$warning.attr('aria-hidden', 'true');
-    },
-
-    // Called by click, scroll, mousemove, keyup, touchstart, touchend, touchmove
-    activity: function() {
-        var now = new Date();
-        if (now - this.lastActivity < 1000)
-            // Throttle these checks to once per second
+    SessionSecurity.prototype.showWarning = function () {
+        if (!this.warning) {
             return;
+        }
+        this.warning.style.display = "block";
+        this.warning.setAttribute("aria-hidden", "false");
+        this.warningVisible = true;
+        var modal = this.warning.querySelector(".session_security_modal");
+        if (modal && typeof modal.focus === "function") {
+            modal.focus();
+        }
+    };
+
+    SessionSecurity.prototype.hideWarning = function () {
+        if (!this.warning) {
+            return;
+        }
+        this.warning.style.display = "none";
+        this.warning.setAttribute("aria-hidden", "true");
+        this.warningVisible = false;
+    };
+
+    SessionSecurity.prototype.activity = function () {
+        var now = new Date();
+        if (now - this.lastActivity < 1000) {
+            return;
+        }
 
         var idleFor = Math.floor((now - this.lastActivity) / 1000);
         this.lastActivity = now;
 
         if (idleFor >= this.expireAfter) {
-            // Enforces checking whether a user's session is expired. This
-            // ensures a user being redirected instead of waiting until nextPing.
             this.expire();
+            return;
         }
 
-        if (this.$warning.is(':visible')) {
-            // Inform the server that the user came back manually, this should
-            // block other browser tabs from expiring.
+        if (this.warningVisible) {
             this.ping();
-            // The hideWarning should only be called when the warning is visible
             this.hideWarning();
         }
-    },
+    };
 
-    // Hit the PingView with the number of seconds since last activity.
-    ping: function() {
+    SessionSecurity.prototype.ping = function () {
         var idleFor = Math.floor((new Date() - this.lastActivity) / 1000);
+        var self = this;
 
-        $.ajax(this.pingUrl, {
-            data: {idleFor: idleFor},
-            cache: false,
-            success: $.proxy(this.pong, this),
-            // In case of network error, we still want to hide potentially
-            // confidential data !!
-            error: $.proxy(this.apply, this),
-            dataType: 'json',
-            type: 'get'
-        });
-    },
+        fetch(buildUrl(this.pingUrl, { idleFor: idleFor }), {
+            method: "GET",
+            credentials: "same-origin",
+            cache: "no-store",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                self.pong(data);
+            })
+            .catch(function () {
+                self.apply();
+            });
+    };
 
-    // Callback to process PingView response.
-    pong: function(data) {
-        if (data == 'logout') return this.expire();
+    SessionSecurity.prototype.pong = function (data) {
+        if (data === "logout") {
+            this.expire();
+            return;
+        }
 
         this.lastActivity = new Date();
         this.lastActivity.setSeconds(this.lastActivity.getSeconds() - data);
         this.apply();
-    },
+    };
 
-    // Apply warning or expiry, setup next ping
-    apply: function() {
-        // Cancel timeout if any, since we're going to make our own
+    SessionSecurity.prototype.apply = function () {
         clearTimeout(this.timeout);
         var idleFor = Math.floor((new Date() - this.lastActivity) / 1000);
+        var nextPing;
 
         if (idleFor >= this.expireAfter) {
-            return this.expire();
+            this.expire();
+            return;
         } else if (idleFor >= this.warnAfter) {
-            if (!this.counterStarted && this.counterElementID){
+            if (!this.counterStarted && this.counterElementID) {
                 this.startCounter();
             }
             this.showWarning();
             nextPing = this.expireAfter - idleFor;
         } else {
             this.hideWarning();
-            if (this.counterStarted && this.counterElementID){
+            if (this.counterStarted && this.counterElementID) {
                 this.stopCounter();
             }
             nextPing = this.warnAfter - idleFor;
         }
 
-        // setTimeout expects the timeout value not to exceed
-        // a 32-bit unsigned int, so cap the value
-        var milliseconds = Math.min(nextPing * 1000, 2147483647)
-        this.timeout = setTimeout($.proxy(this.ping, this), milliseconds);
-    },
+        var milliseconds = Math.min(nextPing * 1000, 2147483647);
+        var self = this;
+        this.timeout = setTimeout(function () {
+            self.ping();
+        }, milliseconds);
+    };
 
-    startCounter: function(){
-        let expireAfter = this.expireAfter;
-        let warnAfter = this.warnAfter;
-        let defaultTimeLeft = expireAfter - warnAfter;
-        let elementTarget = this.counterElementID;
-        let counterStarted = false;
-        if (!this.counterStarted) {
-            document.getElementById(elementTarget).innerHTML = defaultTimeLeft.toString();
-            counterStarted = true;
+    SessionSecurity.prototype.startCounter = function () {
+        if (!this.counterElementID) {
+            return;
         }
-        var t = new Date();
-        t.setSeconds(t.getSeconds() + defaultTimeLeft);
-        this.counterTimeout = setInterval(function() {
+        var element = document.getElementById(this.counterElementID);
+        if (!element) {
+            return;
+        }
+        var expireAfter = this.expireAfter;
+        var warnAfter = this.warnAfter;
+        var defaultTimeLeft = expireAfter - warnAfter;
+
+        if (!this.counterStarted) {
+            element.textContent = defaultTimeLeft.toString();
+            this.counterStarted = true;
+        }
+
+        var endTime = new Date();
+        endTime.setSeconds(endTime.getSeconds() + defaultTimeLeft);
+        this.counterTimeout = setInterval(function () {
             var now = new Date().getTime();
-            var distance = t - now;
-            var seconds = Math.floor((distance % (1000 * expireAfter)) / 1000);
+            var distance = endTime - now;
+            var seconds = Math.max(0, Math.floor((distance % (1000 * expireAfter)) / 1000));
             if (distance > 0) {
-                document.getElementById(elementTarget).innerHTML = seconds.toString();
+                element.textContent = seconds.toString();
             }
         }, 1000);
-        this.counterStarted = counterStarted;
-    },
+    };
 
-    stopCounter: function(){
-      clearTimeout(this.counterTimeout);
-      this.counterStarted = false;
-      let defaultTimeLeft = this.expireAfter - this.warnAfter;
-      document.getElementById(this.counterElementID).innerHTML = defaultTimeLeft.toString();
-    },
+    SessionSecurity.prototype.stopCounter = function () {
+        if (!this.counterElementID) {
+            return;
+        }
+        var element = document.getElementById(this.counterElementID);
+        if (!element) {
+            return;
+        }
+        clearInterval(this.counterTimeout);
+        this.counterStarted = false;
+        var defaultTimeLeft = this.expireAfter - this.warnAfter;
+        element.textContent = defaultTimeLeft.toString();
+    };
 
-    // onbeforeunload handler.
-    onbeforeunload: function(e) {
-        if ($('form[data-dirty]').length && !this.expired) {
+    SessionSecurity.prototype.onbeforeunload = function (event) {
+        if (this.expired || !this.confirmFormDiscard) {
+            return undefined;
+        }
+        if (hasDirtyForms()) {
+            event.preventDefault();
+            event.returnValue = this.confirmFormDiscard;
             return this.confirmFormDiscard;
         }
-    },
+        return undefined;
+    };
 
-    // When an input change, set data-dirty attribute on its form.
-    formChange: function(e) {
-        $(e.target).closest('form').attr('data-dirty', true);
-    },
+    SessionSecurity.prototype.formChange = function (event) {
+        if (!event.target || typeof event.target.closest !== "function") {
+            return;
+        }
+        var form = event.target.closest("form");
+        if (form) {
+            form.setAttribute("data-dirty", "true");
+        }
+    };
 
-    // When a form is submitted or resetted, unset data-dirty attribute.
-    formClean: function(e) {
-        $(e.target).removeAttr('data-dirty');
-    }
-}
+    SessionSecurity.prototype.formClean = function (event) {
+        if (!event.target || typeof event.target.closest !== "function") {
+            return;
+        }
+        var form = event.target.closest("form");
+        if (form) {
+            form.removeAttribute("data-dirty");
+        }
+    };
+
+    window.yourlabs.SessionSecurity = SessionSecurity;
+}(window, document));

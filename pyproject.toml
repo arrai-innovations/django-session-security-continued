@@ -162,6 +162,9 @@ DJANGO_SETTINGS_MODULE = "django_session_security_continued.tests.project.settin
 addopts = "--ds=django_session_security_continued.tests.project.settings --reuse-db"
 testpaths = ["django_session_security_continued/tests"]
 python_files = ["test_*.py"]
+markers = [
+    "selenium: marks tests that require a browser",
+]
 
 [tool.coverage.run]
 branch = true
