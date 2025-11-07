@@ -11,7 +11,7 @@ workflows:
     test:
         jobs:
             - pytest/pytest_fixed_ip:
-                  name: pytest-39
+                  name: python_3.9
                   executor: python39
                   context: arrai-global
                   pytest_args: --cov
@@ -20,7 +20,7 @@ workflows:
                           only:
                               - main
             - pytest/pytest_fixed_ip:
-                  name: pytest-39-no-badge
+                  name: python_3.9-no-badge
                   executor: python39
                   context: arrai-global
                   pytest_args: --cov
@@ -30,7 +30,7 @@ workflows:
                           ignore:
                               - main
             - pytest/pytest_fixed_ip:
-                  name: pytest-310
+                  name: python_3.10
                   executor: pytest/python310
                   resource_class: small
                   context: arrai-global
@@ -41,7 +41,7 @@ workflows:
                           only:
                               - main
             - pytest/pytest:
-                  name: pytest-310-no-badge
+                  name: python_3.10-no-badge
                   executor: pytest/python310
                   resource_class: small
                   context: arrai-global
@@ -53,7 +53,7 @@ workflows:
                           ignore:
                               - main
             - pytest/pytest_fixed_ip:
-                  name: pytest-311
+                  name: python_3.11
                   executor: pytest/python311
                   resource_class: small
                   context: arrai-global
@@ -64,7 +64,7 @@ workflows:
                           only:
                               - main
             - pytest/pytest:
-                  name: pytest-311-no-badge
+                  name: python_3.11-no-badge
                   executor: pytest/python311
                   resource_class: small
                   context: arrai-global
@@ -76,7 +76,7 @@ workflows:
                           ignore:
                               - main
             - pytest/pytest_fixed_ip:
-                  name: pytest-312
+                  name: python_3.12
                   executor: pytest/python312
                   resource_class: small
                   context: arrai-global
@@ -87,7 +87,7 @@ workflows:
                           only:
                               - main
             - pytest/pytest:
-                  name: pytest-312-no-badge
+                  name: python_3.12-no-badge
                   executor: pytest/python312
                   resource_class: small
                   context: arrai-global
