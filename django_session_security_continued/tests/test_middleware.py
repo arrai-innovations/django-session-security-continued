@@ -3,6 +3,7 @@ from datetime import datetime
 from datetime import timedelta
 
 import pytest
+from django.test import override_settings
 
 from django_session_security_continued.utils import get_last_activity
 from django_session_security_continued.utils import set_last_activity
@@ -58,3 +59,30 @@ def test_url_names(authenticated_client, activity_window):
     authenticated_client.get("/ignore/")
     activity3 = get_last_activity(authenticated_client.session)
     assert activity2 == activity3
+
+
+@override_settings(SESSION_SECURITY_PASSIVE_URLS=["/passive/"])
+def test_passive_urls(authenticated_client, activity_window):
+    authenticated_client.get("/admin/")
+    activity1 = get_last_activity(authenticated_client.session)
+    time.sleep(min(2, activity_window.min_warn_after))
+    authenticated_client.get("/passive/")
+    activity2 = get_last_activity(authenticated_client.session)
+    assert activity1 == activity2
+
+
+def test_idle_for_non_integer(authenticated_client):
+    authenticated_client.get("/admin/")
+    activity1 = get_last_activity(authenticated_client.session)
+    authenticated_client.get("/session_security/ping/?idleFor=not-a-number")
+    activity2 = get_last_activity(authenticated_client.session)
+    assert activity1 == activity2
+
+
+def test_idle_for_negative(authenticated_client):
+    authenticated_client.get("/admin/")
+    activity1 = get_last_activity(authenticated_client.session)
+    authenticated_client.get("/session_security/ping/?idleFor=-5")
+    activity2 = get_last_activity(authenticated_client.session)
+    # Negative values are coerced to zero, so activity should stay unchanged.
+    assert activity1 == activity2

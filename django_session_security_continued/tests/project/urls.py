@@ -21,6 +21,11 @@ urlpatterns = [
     path("session_security/", include("django_session_security_continued.urls")),
     path("ignore/", login_required(generic.TemplateView.as_view(template_name="home.html")), name="ignore"),
     path(
+        "passive/",
+        login_required(generic.TemplateView.as_view(template_name="home.html")),
+        name="passive",
+    ),
+    path(
         "template/",
         login_required(generic.TemplateView.as_view(template_name="template.html")),
         name="template",

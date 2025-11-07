@@ -11,9 +11,8 @@ Place it after authentication middleware.
 
 from datetime import datetime
 from datetime import timedelta
-from django.urls import Resolver404
-from django.urls import resolve
-from django.urls import reverse
+from django.conf import settings as django_settings
+from django.urls import Resolver404, resolve, reverse
 from django.utils.deprecation import MiddlewareMixin
 
 from django_session_security_continued.utils import get_last_activity
@@ -28,16 +27,27 @@ class SessionSecurityMiddleware(MiddlewareMixin):
 
     def is_passive_request(self, request):
         """Should we skip activity update on this URL/View."""
-        from django_session_security_continued.settings import PASSIVE_URL_NAMES
-        from django_session_security_continued.settings import PASSIVE_URLS
+        from django_session_security_continued.settings import PASSIVE_URL_NAMES as DEFAULT_PASSIVE_URL_NAMES
+        from django_session_security_continued.settings import PASSIVE_URLS as DEFAULT_PASSIVE_URLS
 
-        if request.path in PASSIVE_URLS:
+        passive_urls = getattr(
+            django_settings,
+            "SESSION_SECURITY_PASSIVE_URLS",
+            DEFAULT_PASSIVE_URLS,
+        )
+        passive_url_names = getattr(
+            django_settings,
+            "SESSION_SECURITY_PASSIVE_URL_NAMES",
+            DEFAULT_PASSIVE_URL_NAMES,
+        )
+
+        if request.path in passive_urls:
             return True
 
         try:
             match = resolve(request.path)
             # TODO: check namespaces too
-            if match.url_name in PASSIVE_URL_NAMES:
+            if match.url_name in passive_url_names:
                 return True
         except Resolver404:
             pass
@@ -96,13 +106,11 @@ class SessionSecurityMiddleware(MiddlewareMixin):
         set_last_activity(request.session, last_activity)
 
     def is_authenticated(self, request):
-        # This is a separate method to allow for subclasses to override the
-        # behavior, mostly.
+        """Provide a hook for subclasses that want custom auth logic."""
         return request.user.is_authenticated
 
     def do_logout(self, request):
-        # This is a separate method to allow for subclasses to override the
-        # behavior, mostly.
+        """Provide a hook for subclasses that want a custom logout implementation."""
         from django.contrib.auth import logout
 
         logout(request)
