@@ -14,3 +14,8 @@ build/
 *.mo
 .tox/
 .coverage
+node_modules/
+.nyc_output/
+django_session_security_continued/static/session_security/coverage/
+coverage-js/
+.uv-cache

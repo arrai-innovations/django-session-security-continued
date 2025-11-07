@@ -27,6 +27,10 @@ SESSION_SECURITY_INSECURE
     having to set SESSION_EXPIRE_AT_BROWSER_CLOSE=True, which you should
     because it makes no sense to use this app with
     ``SESSION_EXPIRE_AT_BROWSER_CLOSE`` to False.
+
+SESSION_SECURITY_JS_PATH
+    Override the static path for the client bundle. Defaults to
+    ``session_security/script.js``; useful for loading instrumented builds in tests.
 """
 
 from django.conf import settings

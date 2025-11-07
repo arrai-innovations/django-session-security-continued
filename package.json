@@ -1,0 +1,28 @@
+{
+  "name": "django-session-security-continued",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Tooling to instrument the session-security client script for tests.",
+  "scripts": {
+    "build:coverage": "COVERAGE=true vite build --mode coverage",
+    "coverage:report": "nyc report --reporter=text-summary --reporter=lcov"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arrai-innovations/django-session-security-continued.git"
+  },
+  "keywords": [],
+  "author": "Arrai Innovations",
+  "license": "MIT",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/arrai-innovations/django-session-security-continued/issues"
+  },
+  "homepage": "https://github.com/arrai-innovations/django-session-security-continued#readme",
+  "devDependencies": {
+    "nyc": "^17.1.0",
+    "patch-package": "^8.0.1",
+    "vite": "^7.2.2",
+    "vite-plugin-istanbul": "^7.2.0"
+  }
+}

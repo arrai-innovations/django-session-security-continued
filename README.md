@@ -72,6 +72,7 @@ SESSION_SECURITY_EXPIRE_AFTER = 600        # Log out after 10 minutes
 SESSION_SECURITY_PASSIVE_URLS = []         # URLs that won’t reset the timer
 SESSION_SECURITY_REDIRECT_TO_LOGOUT = False  # Set True for SSO setups
 SESSION_SECURITY_PING_URL = '/session_security/ping/'  # Activity endpoint
+SESSION_SECURITY_JS_PATH = 'session_security/script.js'  # Override to load custom bundles (tests/coverage)
 ```
 
 ```python
@@ -123,6 +124,9 @@ $ uv sync
 
 # (Optional) Run Git hooks setup
 $ uv run pre-commit install
+
+# Install JS tooling for the client bundle / coverage builds
+$ npm install
 ```
 
 ## Testing
@@ -133,7 +137,17 @@ Chrome is required for the Selenium end-to-end tests (Selenium Manager will down
 $ uv run pytest
 ```
 
-If Chrome isn’t available (or you only want the fast unit tests), skip the browser suite with `uv run pytest -k "not test_script"` until we add explicit markers.
+If Chrome isn’t available (or you only want the fast unit tests), skip the browser suite with `uv run pytest -m "not selenium"`.
+
+### JavaScript coverage
+
+We ship a Vite + Istanbul build that instruments the client bundle and collects coverage from the Selenium run:
+
+1. `npm run build:coverage`
+2. `SESSION_SECURITY_JS_COVERAGE=1 uv run pytest -k selenium`
+3. `npm run coverage:report` (writes reports to `coverage-js/` and `lcov.info`)
+
+The `SESSION_SECURITY_JS_COVERAGE` flag makes the Django test settings load the instrumented bundle and dumps `window.__coverage__` into `.nyc_output/` after each Selenium test.
 
 ## Contributing
 

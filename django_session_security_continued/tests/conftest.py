@@ -1,4 +1,8 @@
+import json
+import os
+import uuid
 from dataclasses import dataclass
+from pathlib import Path
 
 import pytest
 from selenium import webdriver
@@ -50,8 +54,31 @@ def activity_window(settings):
     )
 
 
+JS_COVERAGE_ENV = "SESSION_SECURITY_JS_COVERAGE"
+JS_COVERAGE_STATIC_PATH = "session_security/coverage/script.js"
+REPO_ROOT = Path(__file__).resolve().parents[2]
+NYC_DIR = Path(".nyc_output")
+
+
 @pytest.fixture
-def selenium_browser(live_server, admin_user):
+def selenium_browser(live_server, admin_user, settings):
+    use_js_coverage = bool(os.environ.get(JS_COVERAGE_ENV))
+    if use_js_coverage:
+        settings.SESSION_SECURITY_JS_PATH = JS_COVERAGE_STATIC_PATH
+        coverage_bundle = (
+            REPO_ROOT
+            / "django_session_security_continued"
+            / "static"
+            / "session_security"
+            / "coverage"
+            / "script.js"
+        )
+        if not coverage_bundle.exists():
+            raise RuntimeError(
+                "Instrumented session security bundle not found. "
+                "Run `npm install` (once) and `npm run build:coverage` before running Selenium coverage tests."
+            )
+
     options = ChromeOptions()
     options.add_argument("--headless=new")
     options.add_argument("--disable-gpu")
@@ -65,6 +92,26 @@ def selenium_browser(live_server, admin_user):
     driver.find_element(By.XPATH, '//input[@value="Log in"]').click()
     driver.execute_script('window.open("/admin/", "other")')
 
+    if use_js_coverage:
+        script_sources = driver.execute_script(
+            "return Array.from(document.getElementsByTagName('script')).map(s => s.src);"
+        )
+        if not any("session_security/coverage/script.js" in src for src in script_sources):
+            raise RuntimeError(
+                "Instrumented session security script was not loaded; "
+                "check SESSION_SECURITY_JS_PATH configuration."
+            )
+
     yield driver
+
+    if use_js_coverage:
+        NYC_DIR.mkdir(exist_ok=True)
+        try:
+            coverage_data = driver.execute_script("return window.__coverage__ || null;")
+        except Exception:
+            coverage_data = None
+        if coverage_data:
+            filename = f"{uuid.uuid4().hex}.json"
+            (NYC_DIR / filename).write_text(json.dumps(coverage_data))
 
     driver.quit()

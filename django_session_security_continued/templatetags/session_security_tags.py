@@ -22,3 +22,8 @@ def warn_after(request):
 def redirect_to_logout(request):
     redirect = getattr(settings, "SESSION_SECURITY_REDIRECT_TO_LOGOUT", False)
     return redirect
+
+
+@register.simple_tag
+def session_security_script_path():
+    return getattr(settings, "SESSION_SECURITY_JS_PATH", "session_security/script.js")

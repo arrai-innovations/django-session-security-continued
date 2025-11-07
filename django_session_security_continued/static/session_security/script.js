@@ -17,9 +17,9 @@
     }
 
     function buildUrl(url, params) {
-        var hasQuery = url.indexOf("?") !== -1;
-        var query = [];
-        for (var key in params) {
+        let hasQuery = url.indexOf("?") !== -1;
+        let query = [];
+        for (let key in params) {
             if (Object.prototype.hasOwnProperty.call(params, key)) {
                 query.push(encodeURIComponent(key) + "=" + encodeURIComponent(params[key]));
             }
@@ -44,7 +44,7 @@
 
         assign(this, options || {});
 
-        var self = this;
+        let self = this;
         this.activityHandler = this.activity.bind(this);
         this.events.forEach(function (eventName) {
             document.addEventListener(eventName, self.activityHandler, true);
@@ -86,7 +86,7 @@
         this.warning.style.display = "block";
         this.warning.setAttribute("aria-hidden", "false");
         this.warningVisible = true;
-        var modal = this.warning.querySelector(".session_security_modal");
+        let modal = this.warning.querySelector(".session_security_modal");
         if (modal && typeof modal.focus === "function") {
             modal.focus();
         }
@@ -102,12 +102,12 @@
     };
 
     SessionSecurity.prototype.activity = function () {
-        var now = new Date();
+        let now = new Date();
         if (now - this.lastActivity < 1000) {
             return;
         }
 
-        var idleFor = Math.floor((now - this.lastActivity) / 1000);
+        let idleFor = Math.floor((now - this.lastActivity) / 1000);
         this.lastActivity = now;
 
         if (idleFor >= this.expireAfter) {
@@ -122,8 +122,8 @@
     };
 
     SessionSecurity.prototype.ping = function () {
-        var idleFor = Math.floor((new Date() - this.lastActivity) / 1000);
-        var self = this;
+        let idleFor = Math.floor((new Date() - this.lastActivity) / 1000);
+        let self = this;
 
         fetch(buildUrl(this.pingUrl, { idleFor: idleFor }), {
             method: "GET",
@@ -157,8 +157,8 @@
 
     SessionSecurity.prototype.apply = function () {
         clearTimeout(this.timeout);
-        var idleFor = Math.floor((new Date() - this.lastActivity) / 1000);
-        var nextPing;
+        let idleFor = Math.floor((new Date() - this.lastActivity) / 1000);
+        let nextPing;
 
         if (idleFor >= this.expireAfter) {
             this.expire();
@@ -177,8 +177,8 @@
             nextPing = this.warnAfter - idleFor;
         }
 
-        var milliseconds = Math.min(nextPing * 1000, 2147483647);
-        var self = this;
+        let milliseconds = Math.min(nextPing * 1000, 2147483647);
+        let self = this;
         this.timeout = setTimeout(function () {
             self.ping();
         }, milliseconds);
@@ -188,25 +188,25 @@
         if (!this.counterElementID) {
             return;
         }
-        var element = document.getElementById(this.counterElementID);
+        let element = document.getElementById(this.counterElementID);
         if (!element) {
             return;
         }
-        var expireAfter = this.expireAfter;
-        var warnAfter = this.warnAfter;
-        var defaultTimeLeft = expireAfter - warnAfter;
+        let expireAfter = this.expireAfter;
+        let warnAfter = this.warnAfter;
+        let defaultTimeLeft = expireAfter - warnAfter;
 
         if (!this.counterStarted) {
             element.textContent = defaultTimeLeft.toString();
             this.counterStarted = true;
         }
 
-        var endTime = new Date();
+        let endTime = new Date();
         endTime.setSeconds(endTime.getSeconds() + defaultTimeLeft);
         this.counterTimeout = setInterval(function () {
-            var now = new Date().getTime();
-            var distance = endTime - now;
-            var seconds = Math.max(0, Math.floor((distance % (1000 * expireAfter)) / 1000));
+            let now = new Date().getTime();
+            let distance = endTime - now;
+            let seconds = Math.max(0, Math.floor((distance % (1000 * expireAfter)) / 1000));
             if (distance > 0) {
                 element.textContent = seconds.toString();
             }
@@ -217,13 +217,13 @@
         if (!this.counterElementID) {
             return;
         }
-        var element = document.getElementById(this.counterElementID);
+        let element = document.getElementById(this.counterElementID);
         if (!element) {
             return;
         }
         clearInterval(this.counterTimeout);
         this.counterStarted = false;
-        var defaultTimeLeft = this.expireAfter - this.warnAfter;
+        let defaultTimeLeft = this.expireAfter - this.warnAfter;
         element.textContent = defaultTimeLeft.toString();
     };
 
@@ -243,7 +243,7 @@
         if (!event.target || typeof event.target.closest !== "function") {
             return;
         }
-        var form = event.target.closest("form");
+        let form = event.target.closest("form");
         if (form) {
             form.setAttribute("data-dirty", "true");
         }
@@ -253,7 +253,7 @@
         if (!event.target || typeof event.target.closest !== "function") {
             return;
         }
-        var form = event.target.closest("form");
+        let form = event.target.closest("form");
         if (form) {
             form.removeAttribute("data-dirty");
         }
