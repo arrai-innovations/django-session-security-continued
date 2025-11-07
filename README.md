@@ -4,7 +4,15 @@
 
 <!--prettier-ignore-start-->
 <!--TOC-->
-<!-- todo: generate TOC -->
+
+- [About](#about)
+- [Requirements / Compatibility](#requirements--compatibility)
+- [Installation](#installation)
+- [Single Sign-On (SSO) Considerations](#single-sign-on-sso-considerations)
+- [Development](#development)
+- [Testing](#testing)
+- [Contributing](#contributing)
+
 <!--TOC-->
 <!--prettier-ignore-end-->
 

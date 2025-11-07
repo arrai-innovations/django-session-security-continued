@@ -9,21 +9,17 @@ To install this middleware, add to your ``settings.MIDDLEWARE_CLASSES``::
 Make sure that it is placed **after** authentication middlewares.
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime
+from datetime import timedelta
 
 import django
-try: # Django 2.0
-    from django.urls import reverse, resolve, Resolver404
-except: # Django < 2.0
-    from django.core.urlresolvers import reverse, resolve, Resolver404
+from django.urls import Resolver404
+from django.urls import resolve
+from django.urls import reverse
+from django.utils.deprecation import MiddlewareMixin
 
-try:
-    from django.utils.deprecation import MiddlewareMixin
-except ImportError:  # Django < 1.10
-    # Works perfectly for everyone using MIDDLEWARE_CLASSES
-    MiddlewareMixin = object
-
-from .utils import get_last_activity, set_last_activity
+from django_session_security_continued.utils import get_last_activity
+from django_session_security_continued.utils import set_last_activity
 
 
 class SessionSecurityMiddleware(MiddlewareMixin):
@@ -33,8 +29,9 @@ class SessionSecurityMiddleware(MiddlewareMixin):
     """
 
     def is_passive_request(self, request):
-        """ Should we skip activity update on this URL/View. """
-        from .settings import PASSIVE_URLS, PASSIVE_URL_NAMES
+        """Should we skip activity update on this URL/View."""
+        from django_session_security_continued.settings import PASSIVE_URL_NAMES
+        from django_session_security_continued.settings import PASSIVE_URLS
 
         if request.path in PASSIVE_URLS:
             return True
@@ -51,16 +48,17 @@ class SessionSecurityMiddleware(MiddlewareMixin):
 
     def get_expire_seconds(self, request):
         """Return time (in seconds) before the user should be logged out."""
-        from .settings import EXPIRE_AFTER
+        from django_session_security_continued.settings import EXPIRE_AFTER
+
         return EXPIRE_AFTER
 
     def process_request(self, request):
-        """ Update last activity time or logout. """
+        """Update last activity time or logout."""
         if not self.is_authenticated(request):
             return
 
         now = datetime.now()
-        if '_session_security' not in request.session:
+        if "_session_security" not in request.session:
             set_last_activity(request.session, now)
             return
 
@@ -68,8 +66,7 @@ class SessionSecurityMiddleware(MiddlewareMixin):
         expire_seconds = self.get_expire_seconds(request)
         if delta >= timedelta(seconds=expire_seconds):
             self.do_logout(request)
-        elif (request.path == reverse('session_security_ping') and
-                'idleFor' in request.GET):
+        elif request.path == reverse("session_security_ping") and "idleFor" in request.GET:
             self.update_last_activity(request, now)
         elif not self.is_passive_request(request):
             set_last_activity(request.session, now)
@@ -85,7 +82,7 @@ class SessionSecurityMiddleware(MiddlewareMixin):
 
         # Gracefully ignore non-integer values
         try:
-            client_idle_for = int(request.GET['idleFor'])
+            client_idle_for = int(request.GET["idleFor"])
         except ValueError:
             return
 
@@ -114,4 +111,5 @@ class SessionSecurityMiddleware(MiddlewareMixin):
         # This is a separate method to allow for subclasses to override the
         # behavior, mostly.
         from django.contrib.auth import logout
+
         logout(request)

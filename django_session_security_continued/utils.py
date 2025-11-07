@@ -1,11 +1,11 @@
-""" Helpers to support json encoding of session data """
+"""Helpers to support json encoding of session data"""
 
 from datetime import datetime
 
 
 def set_last_activity(session, dt):
-    """ Set the last activity datetime as a string in the session. """
-    session['_session_security'] = dt.strftime('%Y-%m-%dT%H:%M:%S.%f')
+    """Set the last activity datetime as a string in the session."""
+    session["_session_security"] = dt.strftime("%Y-%m-%dT%H:%M:%S.%f")
 
 
 def get_last_activity(session):
@@ -14,8 +14,7 @@ def get_last_activity(session):
     python datetime object.
     """
     try:
-        return datetime.strptime(session['_session_security'],
-                '%Y-%m-%dT%H:%M:%S.%f')
+        return datetime.strptime(session["_session_security"], "%Y-%m-%dT%H:%M:%S.%f")
     except AttributeError:
         #################################################################
         # * this is an odd bug in python
@@ -36,4 +35,3 @@ def get_last_activity(session):
         return datetime.now()
     except TypeError:
         return datetime.now()
-

@@ -14,6 +14,7 @@ ie::
     )
 
 """
+
 try:
     from django.urls import re_path as url
 except ImportError:
@@ -22,12 +23,13 @@ except ImportError:
     except ImportError:
         from django.conf.urls.defaults import url
 
-from .views import PingView
+from django_session_security_continued.views import PingView
+
 
 urlpatterns = [
     url(
-        'ping/$',
+        "ping/$",
         PingView.as_view(),
-        name='session_security_ping',
+        name="session_security_ping",
     )
 ]

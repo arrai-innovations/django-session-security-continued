@@ -13,8 +13,8 @@ Set an amount of seconds and focusout of this field:
     $(document).ready(function(){
         function longRunningRequest() {
             $.get(
-                '{% url "sleep" %}', 
-                {seconds: $('input[name=seconds]').val()}, 
+                '{% url "sleep" %}',
+                {seconds: $('input[name=seconds]').val()},
                 function(data, textStatus, jqXHR) {
                     longRunningRequest();
                 }

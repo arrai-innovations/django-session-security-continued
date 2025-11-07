@@ -1,5 +1,6 @@
 *.pyc
 django_session_security.egg-info
+django_session_security_continued.egg-info
 .ropeproject
 .idea
 dist
