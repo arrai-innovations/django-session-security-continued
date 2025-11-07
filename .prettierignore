@@ -1,0 +1,5 @@
+node_modules
+dist
+coverage-js
+.nyc_output
+django_session_security_continued/static/session_security/coverage

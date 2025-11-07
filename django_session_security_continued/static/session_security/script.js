@@ -1,9 +1,8 @@
-/* global window, document */
-(function (window, document) {
+(function (globalWindow, globalDocument) {
     "use strict";
 
-    if (typeof window.yourlabs === "undefined") {
-        window.yourlabs = {};
+    if (typeof globalWindow.yourlabs === "undefined") {
+        globalWindow.yourlabs = {};
     }
 
     function assign(target, source) {
@@ -28,14 +27,22 @@
     }
 
     function hasDirtyForms() {
-        return document.querySelector("form[data-dirty]") !== null;
+        return globalDocument.querySelector("form[data-dirty]") !== null;
     }
 
     function SessionSecurity(options) {
-        this.warning = document.getElementById("session_security_warning");
+        this.warning = globalDocument.getElementById("session_security_warning");
         this.warningVisible = false;
         this.lastActivity = new Date();
-        this.events = ["mousemove", "scroll", "keyup", "click", "touchstart", "touchend", "touchmove"];
+        this.events = [
+            "mousemove",
+            "scroll",
+            "keyup",
+            "click",
+            "touchstart",
+            "touchend",
+            "touchmove",
+        ];
         this.counterElementID = "session_security_counter";
         this.expired = false;
         this.counterStarted = false;
@@ -47,21 +54,33 @@
         let self = this;
         this.activityHandler = this.activity.bind(this);
         this.events.forEach(function (eventName) {
-            document.addEventListener(eventName, self.activityHandler, true);
+            globalDocument.addEventListener(eventName, self.activityHandler, true);
         });
 
         if (this.confirmFormDiscard) {
             this.beforeUnloadHandler = this.onbeforeunload.bind(this);
-            window.addEventListener("beforeunload", this.beforeUnloadHandler);
-            document.addEventListener("change", function (event) {
-                self.formChange(event);
-            }, true);
-            document.addEventListener("submit", function (event) {
-                self.formClean(event);
-            }, true);
-            document.addEventListener("reset", function (event) {
-                self.formClean(event);
-            }, true);
+            globalWindow.addEventListener("beforeunload", this.beforeUnloadHandler);
+            globalDocument.addEventListener(
+                "change",
+                function (event) {
+                    self.formChange(event);
+                },
+                true,
+            );
+            globalDocument.addEventListener(
+                "submit",
+                function (event) {
+                    self.formClean(event);
+                },
+                true,
+            );
+            globalDocument.addEventListener(
+                "reset",
+                function (event) {
+                    self.formClean(event);
+                },
+                true,
+            );
         }
 
         this.apply();
@@ -73,9 +92,9 @@
         }
         this.expired = true;
         if (typeof this.returnToUrl === "string" && this.returnToUrl.length > 0) {
-            window.location.href = this.returnToUrl;
+            globalWindow.location.href = this.returnToUrl;
         } else {
-            window.location.reload();
+            globalWindow.location.reload();
         }
     };
 
@@ -130,8 +149,8 @@
             credentials: "same-origin",
             cache: "no-store",
             headers: {
-                "X-Requested-With": "XMLHttpRequest"
-            }
+                "X-Requested-With": "XMLHttpRequest",
+            },
         })
             .then(function (response) {
                 return response.json();
@@ -188,7 +207,7 @@
         if (!this.counterElementID) {
             return;
         }
-        let element = document.getElementById(this.counterElementID);
+        let element = globalDocument.getElementById(this.counterElementID);
         if (!element) {
             return;
         }
@@ -217,7 +236,7 @@
         if (!this.counterElementID) {
             return;
         }
-        let element = document.getElementById(this.counterElementID);
+        let element = globalDocument.getElementById(this.counterElementID);
         if (!element) {
             return;
         }
@@ -259,5 +278,5 @@
         }
     };
 
-    window.yourlabs.SessionSecurity = SessionSecurity;
-}(window, document));
+    globalWindow.yourlabs.SessionSecurity = SessionSecurity;
+})(window, document);

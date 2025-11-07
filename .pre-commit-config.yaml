@@ -40,3 +40,18 @@ repos:
       - id: circleci-config-validate
         stages: [pre-commit]
         files: ^.circleci/config.yml$
+
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint (session_security)
+        entry: npm run lint:eslint
+        language: system
+        pass_filenames: false
+        types: [javascript]
+      - id: prettier
+        name: prettier (session_security)
+        entry: npm run lint:prettier
+        language: system
+        pass_filenames: false
+        types: [javascript, css]
