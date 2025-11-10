@@ -8,8 +8,10 @@ from pathlib import Path
 
 import pytest
 from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 @dataclass
@@ -107,6 +109,7 @@ JS_COVERAGE_ENV = "SESSION_SECURITY_JS_COVERAGE"
 JS_COVERAGE_STATIC_PATH = "session_security/coverage/script.js"
 REPO_ROOT = Path(__file__).resolve().parents[2]
 NYC_DIR = Path(".nyc_output")
+SCRIPT_LOAD_TIMEOUT = 10
 
 
 @pytest.fixture
@@ -135,13 +138,23 @@ def selenium_browser(live_server, admin_user, settings):
     driver.execute_script('window.open("/admin/", "other")')
 
     if use_js_coverage:
-        script_sources = driver.execute_script(
-            "return Array.from(document.getElementsByTagName('script')).map(s => s.src);"
-        )
-        if not any("session_security/coverage/script.js" in src for src in script_sources):
-            raise RuntimeError(
-                "Instrumented session security script was not loaded; check SESSION_SECURITY_JS_PATH configuration."
+
+        def _script_loaded(web_driver):
+            sources = web_driver.execute_script(
+                "return Array.from(document.getElementsByTagName('script')).map(s => s.src);"
             )
+            return any(JS_COVERAGE_STATIC_PATH in src for src in sources)
+
+        try:
+            WebDriverWait(driver, SCRIPT_LOAD_TIMEOUT).until(_script_loaded)
+        except TimeoutException as exc:
+            script_sources = driver.execute_script(
+                "return Array.from(document.getElementsByTagName('script')).map(s => s.src);"
+            )
+            raise RuntimeError(
+                "Instrumented session security script was not loaded; check SESSION_SECURITY_JS_PATH configuration. "
+                f"Scripts present: {script_sources}"
+            ) from exc
 
     yield driver
 
