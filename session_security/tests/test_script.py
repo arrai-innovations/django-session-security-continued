@@ -25,28 +25,28 @@ def test_warning_shows_and_session_expires(selenium_browser, activity_window):
     start = datetime.datetime.now()
 
     for _ in _iterate_windows(selenium_browser):
-        warning = WebDriverWait(selenium_browser, activity_window.max_warn_after).until(
+        warning = WebDriverWait(selenium_browser, activity_window.warn_timeout).until(
             expected_conditions.visibility_of_element_located((By.ID, "session_security_warning"))
         )
         assert warning.is_displayed()
 
-    delta = datetime.datetime.now() - start
-    assert delta.seconds >= activity_window.min_warn_after
-    assert delta.seconds <= activity_window.max_warn_after
+    delta = (datetime.datetime.now() - start).total_seconds()
+    assert delta >= activity_window.min_warn_after
+    assert delta <= activity_window.max_warn_after
 
     for _ in _iterate_windows(selenium_browser):
-        password_field = WebDriverWait(selenium_browser, activity_window.max_expire_after).until(
+        password_field = WebDriverWait(selenium_browser, activity_window.expire_timeout).until(
             expected_conditions.visibility_of_element_located((By.ID, "id_password"))
         )
         assert password_field.is_displayed()
-        delta = datetime.datetime.now() - start
-        assert delta.seconds >= activity_window.min_expire_after
-        assert delta.seconds <= activity_window.max_expire_after
+        delta = (datetime.datetime.now() - start).total_seconds()
+        assert delta >= activity_window.min_expire_after
+        assert delta <= activity_window.max_expire_after
 
 
 def test_activity_hides_warning(selenium_browser, activity_window):
     time.sleep(activity_window.min_warn_after * 0.7)
-    WebDriverWait(selenium_browser, activity_window.max_warn_after).until(
+    WebDriverWait(selenium_browser, activity_window.warn_timeout).until(
         expected_conditions.visibility_of_element_located((By.ID, "session_security_warning"))
     )
 
@@ -65,7 +65,7 @@ def test_activity_prevents_warning(selenium_browser, activity_window):
     _press_space(selenium_browser)
     start = datetime.datetime.now()
 
-    warning = WebDriverWait(selenium_browser, activity_window.max_warn_after).until(
+    warning = WebDriverWait(selenium_browser, activity_window.warn_timeout).until(
         expected_conditions.visibility_of_element_located((By.ID, "session_security_warning"))
     )
     assert warning.is_displayed()

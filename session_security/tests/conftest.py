@@ -16,8 +16,10 @@ from selenium.webdriver.common.by import By
 class ActivityWindow:
     min_warn_after: float
     max_warn_after: float
+    warn_timeout: float
     min_expire_after: float
     max_expire_after: float
+    expire_timeout: float
 
 
 @pytest.fixture
@@ -45,11 +47,14 @@ def authenticated_client(client, admin_user):
 
 
 TIMEOUT_PADDING_ENV = "SESSION_SECURITY_TIMEOUT_PADDING"
+CI_TIMEOUT_PADDING_DEFAULT = 2.0
 
 
 def _timeout_padding_seconds() -> float:
     raw_value = os.environ.get(TIMEOUT_PADDING_ENV)
-    if not raw_value:
+    if raw_value is None:
+        return CI_TIMEOUT_PADDING_DEFAULT if os.environ.get("CI") else 0.0
+    if raw_value == "":
         return 0.0
     try:
         padding = float(raw_value)
@@ -67,12 +72,16 @@ def activity_window(settings):
     padding = _timeout_padding_seconds()
     warn_margin = 0.5  # always keep at least this much headroom before expiry
     max_warn_cap = max(warn_after, expire_after - warn_margin)
-    max_warn_after = min(expire_after * 0.9 + padding, max_warn_cap)
+    max_warn_after = max_warn_cap
+    warn_timeout = max_warn_after + padding
+    max_expire_after = expire_after * 1.5
     return ActivityWindow(
         min_warn_after=warn_after,
         max_warn_after=max_warn_after,
+        warn_timeout=warn_timeout,
         min_expire_after=expire_after,
-        max_expire_after=expire_after * 1.5 + padding,
+        max_expire_after=max_expire_after,
+        expire_timeout=max_expire_after + padding,
     )
 
 
