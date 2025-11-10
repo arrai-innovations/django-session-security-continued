@@ -1,0 +1,3 @@
+recursive-include session_security/templates *.html
+recursive-include session_security/static *.css *.js *.map
+recursive-include session_security/locale *.po

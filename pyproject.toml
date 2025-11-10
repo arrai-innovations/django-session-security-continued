@@ -213,9 +213,9 @@ include = ["session_security*"]
 
 [tool.setuptools.package-data]
 "session_security" = [
-    "*.html",
-    "*.css",
-    "*.js",
-    "*.po",
-    "*.mo",
+    "templates/**/*.html",
+    "static/**/*.css",
+    "static/**/*.js",
+    "static/**/*.map",
+    "locale/**/*.po",
 ]
