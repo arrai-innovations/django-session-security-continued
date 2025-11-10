@@ -2,7 +2,7 @@
 
 ## Post-fork Releases
 
-### 3.0.0a1 — 2025-11-10
+### 3.0.0a1 - 2025-11-10
 
 **Breaking changes**
 - Dropped support for Django versions earlier than 4.2 and removed the legacy compatibility shims.

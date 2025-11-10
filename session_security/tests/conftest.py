@@ -102,9 +102,7 @@ def selenium_browser(live_server, admin_user, settings):
     use_js_coverage = bool(os.environ.get(JS_COVERAGE_ENV))
     if use_js_coverage:
         settings.SESSION_SECURITY_JS_PATH = JS_COVERAGE_STATIC_PATH
-        coverage_bundle = (
-            REPO_ROOT / "session_security" / "static" / "session_security" / "coverage" / "script.js"
-        )
+        coverage_bundle = REPO_ROOT / "session_security" / "static" / "session_security" / "coverage" / "script.js"
         if not coverage_bundle.exists():
             raise RuntimeError(
                 "Instrumented session security bundle not found. "

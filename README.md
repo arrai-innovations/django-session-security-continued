@@ -17,6 +17,7 @@
 - [Single Sign-On (SSO) Considerations](#single-sign-on-sso-considerations)
 - [Development](#development)
 - [Testing](#testing)
+  - [JavaScript coverage](#javascript-coverage)
 - [Contributing](#contributing)
 
 <!--TOC-->
