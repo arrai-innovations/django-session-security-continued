@@ -65,9 +65,12 @@ def activity_window(settings):
     expire_after = settings.SESSION_SECURITY_EXPIRE_AFTER
     warn_after = settings.SESSION_SECURITY_WARN_AFTER
     padding = _timeout_padding_seconds()
+    warn_margin = 0.5  # always keep at least this much headroom before expiry
+    max_warn_cap = max(warn_after, expire_after - warn_margin)
+    max_warn_after = min(expire_after * 0.9 + padding, max_warn_cap)
     return ActivityWindow(
         min_warn_after=warn_after,
-        max_warn_after=expire_after * 0.9 + padding,
+        max_warn_after=max_warn_after,
         min_expire_after=expire_after,
         max_expire_after=expire_after * 1.5 + padding,
     )
