@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "django-session-security-continued"
 version = "3.0.0a1"
 description = "Client and server-side session timeout enforcement with warnings for Django 4.2+."
-readme = "README.rst"
+readme = "README.md"
 requires-python = ">=3.9"
 license-files = ["LICENSE"]
 authors = [
