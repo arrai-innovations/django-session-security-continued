@@ -7,6 +7,22 @@ executors:
     python39:
         docker:
             - image: cimg/python:3.9-browsers
+    python39-simple:
+        docker:
+            - image: cimg/python:3.9
+jobs:
+    build:
+        executor: python39-simple
+        resource_class: small
+        steps:
+            - checkout
+            - run:
+                  name: Build Package
+                  command: uv build
+            - save_cache:
+                  paths:
+                      - ~/project/dist
+                  key: build-{{ arch }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}
 workflows:
     test:
         jobs:
@@ -99,6 +115,18 @@ workflows:
                       branches:
                           ignore:
                               - main
+            - build:
+                  name: build
+                  requires:
+                      - python_3.9
+                      - python_3.10
+                      - python_3.11
+                      - python_3.12
+                  filters:
+                      tags:
+                          only: /.*/
+                      branches:
+                          ignore: /.*/
     lint:
         jobs:
             - lintinator/lint_python_fixed_ip:
