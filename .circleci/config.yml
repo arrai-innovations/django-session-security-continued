@@ -44,6 +44,8 @@ workflows:
                   pytest_args: --cov
                   create_badges: false
                   filters:
+                      tags:
+                          only: /.*/
                       branches:
                           ignore:
                               - main
@@ -67,6 +69,8 @@ workflows:
                   build_coverage: false
                   create_badges: false
                   filters:
+                      tags:
+                          only: /.*/
                       branches:
                           ignore:
                               - main
@@ -90,6 +94,8 @@ workflows:
                   build_coverage: false
                   create_badges: false
                   filters:
+                      tags:
+                          only: /.*/
                       branches:
                           ignore:
                               - main
@@ -114,6 +120,8 @@ workflows:
                   build_coverage: false
                   create_badges: false
                   filters:
+                      tags:
+                          only: /.*/
                       branches:
                           ignore:
                               - main
