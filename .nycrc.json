@@ -3,6 +3,6 @@
   "include": [
     "session_security/static/session_security/script.js"
   ],
-  "reporter": ["text-summary", "lcov"],
+  "reporter": ["text-summary", "lcov", "json-summary"],
   "report-dir": "coverage-js"
 }
