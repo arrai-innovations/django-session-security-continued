@@ -5,7 +5,7 @@
   "description": "Tooling to instrument the session-security client script for tests.",
   "scripts": {
     "build:coverage": "COVERAGE=true vite build --mode coverage",
-    "coverage:report": "nyc report --reporter=text-summary --reporter=lcov",
+    "coverage:report": "nyc report",
     "lint": "npm run lint:eslint && npm run lint:prettier",
     "lint:eslint": "npx eslint session_security/static/session_security",
     "lint:prettier": "npx prettier --check session_security/static/session_security",
