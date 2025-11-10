@@ -96,6 +96,7 @@ workflows:
             - pytest/pytest_fixed_ip:
                   name: python_3.9
                   executor: python39
+                  resource_class: small
                   context: arrai-global
                   pytest_args: --cov
                   filters:
@@ -105,6 +106,7 @@ workflows:
             - pytest/pytest_fixed_ip:
                   name: python_3.9-no-badge
                   executor: python39
+                  resource_class: small
                   context: arrai-global
                   pytest_args: --cov
                   create_badges: false
