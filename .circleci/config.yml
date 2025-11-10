@@ -5,6 +5,7 @@ orbs:
     pip-audit: arrai/pip-audit@1.0.3
     pypi: arrai/pypi@3.1.0
     pytest: arrai/pytest@10.0.0
+    utils: arrai/utils@1.21.1
 executors:
     python39:
         docker:
@@ -25,9 +26,73 @@ jobs:
                   paths:
                       - ~/project/dist
                   key: build-{{ arch }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}
+    js_coverage:
+        executor: python39
+        resource_class: small
+        circleci_ip_ranges: true
+        parameters:
+            create_badges:
+                description: Create status badges
+                type: boolean
+                default: true
+        steps:
+            - checkout
+            - utils/add_ssh_config
+            - run:
+                  name: Install python dependencies
+                  command: uv sync --all-groups
+            - run:
+                  name: Install javascript dependencies
+                  command: npm install
+            - run:
+                  name: Build javascript coverage
+                  command: npm run build:coverage
+                  when: always
+            - run:
+                  name: Run tests
+                  command: SESSION_SECURITY_JS_COVERAGE=1 uv run pytest -k selenium
+                  when: always
+            - run:
+                  name: Generate coverage report
+                  command: npm run coverage:report
+                  when: always
+            - utils/rsync_folder:
+                  when: always
+                  folder: coverage-js/
+                  remote_folder: ${CIRCLE_BRANCH}/${CIRCLE_JOB}
+                  host: docs
+            - when:
+                  condition: <<parameters.create_badges>>
+                  steps:
+                      - utils/make_coverage_shield:
+                            logo: JavaScript
+                            when: always
+                            link: https://${DOCS_HOST}/${CIRCLE_PROJECT_REPONAME}/artifacts/${CIRCLE_BRANCH}/${CIRCLE_JOB}/
+                      - utils/rsync_file:
+                            when: always
+                            file: /tmp/coverage.svg
+                            remote_file: ${CIRCLE_BRANCH}/${CIRCLE_JOB}.svg
+                            host: docs
 workflows:
     test:
         jobs:
+            - js_coverage:
+                  name: js-coverage
+                  context: arrai-global
+                  filters:
+                      branches:
+                          only:
+                              - main
+            - js_coverage:
+                  name: js-coverage-no-badge
+                  context: arrai-global
+                  create_badges: false
+                  filters:
+                      tags:
+                          only: /.*/
+                      branches:
+                          ignore:
+                              - main
             - pytest/pytest_fixed_ip:
                   name: python_3.9
                   executor: python39
