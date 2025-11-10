@@ -1,12 +1,30 @@
 version: 2.1
 orbs:
+    github: arrai/github@5.0.0
     lintinator: arrai/lintinator@2.1.0
     pip-audit: arrai/pip-audit@1.0.3
+    pypi: arrai/pypi@3.1.0
     pytest: arrai/pytest@10.0.0
 executors:
     python39:
         docker:
             - image: cimg/python:3.9-browsers
+    python39-simple:
+        docker:
+            - image: cimg/python:3.9
+jobs:
+    build:
+        executor: python39-simple
+        resource_class: small
+        steps:
+            - checkout
+            - run:
+                  name: Build Package
+                  command: uv build
+            - save_cache:
+                  paths:
+                      - ~/project/dist
+                  key: build-{{ arch }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}
 workflows:
     test:
         jobs:
@@ -99,6 +117,50 @@ workflows:
                       branches:
                           ignore:
                               - main
+            - build:
+                  name: build
+                  requires:
+                      - python_3.9
+                      - python_3.10
+                      - python_3.11
+                      - python_3.12
+                  filters:
+                      tags:
+                          only: /.*/
+                      branches:
+                          ignore: /.*/
+            - pypi/upload_release:
+                  name: publish
+                  cache_key: build-{{ arch }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}
+                  context: arrai-public-package-publishing
+                  requires:
+                      - build
+                  filters:
+                      tags:
+                          only: /.*/
+                      branches:
+                          ignore: /.*/
+            - github/create_release:
+                  name: release_on_github
+                  context: arrai-global
+                  requires:
+                      - build
+                  filters:
+                      tags:
+                          only: /^(?:[0-9]+[.]){2}[0-9]+$/
+                      branches:
+                          ignore: /.*/
+            - github/create_release:
+                  name: prerelease_on_github
+                  context: arrai-global
+                  prerelease: true
+                  requires:
+                      - build
+                  filters:
+                      tags:
+                          only: /^(?:[0-9]+[.]){2}[0-9]+(?:[AaBb]|RC|rc)[0-9]*$/
+                      branches:
+                          ignore: /.*/
     lint:
         jobs:
             - lintinator/lint_python_fixed_ip:
