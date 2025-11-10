@@ -64,6 +64,10 @@ jobs:
             - when:
                   condition: <<parameters.create_badges>>
                   steps:
+                      - run:
+                            name: Calculate coverage percentage
+                            command: jq 'if .total.branches.pct != "Unknown" and .total.statements.pct != "Unknown" then ((.total.branches.pct + .total.statements.pct) / 2) else 0 end | floor' coverage-js/coverage-summary.json >> /tmp/.coveragep
+                            when: always
                       - utils/make_coverage_shield:
                             logo: JavaScript
                             when: always
