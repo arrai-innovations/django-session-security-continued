@@ -8,7 +8,7 @@ version = "3.0.0.dev0"
 description = "Client and server-side session timeout enforcement with warnings for Django 4.2+."
 readme = "README.rst"
 requires-python = ">=3.9"
-license = { file = "LICENSE" }
+license-files = ["LICENSE"]
 authors = [
     { name = "Matt Bosworth (https://github.com/mattbo)" },
     { name = "Fabio Caritas Barrionuevo da Luz (https://github.com/luzfcb)" },
