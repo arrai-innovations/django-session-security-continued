@@ -58,7 +58,7 @@ jobs:
                   when: always
             - utils/rsync_folder:
                   when: always
-                  folder: coverage-js/
+                  folder: coverage-js/lcov-report/
                   remote_folder: ${CIRCLE_BRANCH}/${CIRCLE_JOB}
                   host: docs
             - when:
