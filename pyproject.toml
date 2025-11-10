@@ -10,6 +10,27 @@ readme = "README.rst"
 requires-python = ">=3.9"
 license = { file = "LICENSE" }
 authors = [
+    { name = "Matt Bosworth (https://github.com/mattbo)" },
+    { name = "Fabio Caritas Barrionuevo da Luz (https://github.com/luzfcb)" },
+    { name = "Pēteris Caune (https://github.com/cuu508)" },
+    { name = "John David Giese (https://github.com/johndgiese)" },
+    { name = "Jose Antonio Martin Prieto (https://github.com/jantoniomartin)" },
+    { name = "Richard Moorhead (https://github.com/autodidacticon)" },
+    { name = "Jean-Michel Nirgal Vourgère (https://github.com/nirgal)" },
+    { name = "Michał Pasternak (https://github.com/mpasternak)" },
+    { name = "James Pic (https://github.com/jpic)" },
+    { name = "Matthew Schettler (https://github.com/mschettler)" },
+    { name = "Scott Sexton (https://github.com/scottsexton)" },
+    { name = "Jacek Ostański (https://github.com/jacoor)" },
+    { name = "Aaron Krill (https://github.com/krillr)" },
+    { name = "@yscumc (https://github.com/yscumc)" },
+    { name = "Marco Fucci (https://github.com/marcofucci)" },
+    { name = "Andrei Coman (https://github.com/comandrei)" },
+    { name = "Ali Hasan Imam (https://github.com/alihasanimam)" },
+    { name = "Joel Hillacre (https://github.com/jhillacre)" },
+    { name = "Peter Mack (https://github.com/pmack)" }
+]
+maintainers = [
     { name = "Arrai Innovations", email = "support@arrai.com" },
 ]
 classifiers = [
