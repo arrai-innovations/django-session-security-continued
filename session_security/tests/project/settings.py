@@ -38,7 +38,7 @@ INSTALLED_APPS = (
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django_session_security_continued",
+    "session_security",
 )
 MIDDLEWARE = (
     "django.middleware.common.CommonMiddleware",
@@ -46,12 +46,12 @@ MIDDLEWARE = (
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "django_session_security_continued.middleware.SessionSecurityMiddleware",
+    "session_security.middleware.SessionSecurityMiddleware",
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = "django_session_security_continued.tests.project.urls"
+ROOT_URLCONF = "session_security.tests.project.urls"
 
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, "templates"), "templates"]
 
@@ -73,7 +73,7 @@ TEMPLATES = [
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
-WSGI_APPLICATION = "django_session_security_continued.tests.project.wsgi.application"
+WSGI_APPLICATION = "session_security.tests.project.wsgi.application"
 
 
 # Database

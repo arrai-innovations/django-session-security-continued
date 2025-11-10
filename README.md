@@ -48,14 +48,14 @@ $ pip install django-session-security-continued
 
 INSTALLED_APPS = [
     # Add the app
-    'django_session_security_continued',
+    'session_security',
     # ...
 ]
 
 MIDDLEWARE = [
     # Make sure this comes AFTER the authentication middleware
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django_session_security_continued.middleware.SessionSecurityMiddleware',
+    'session_security.middleware.SessionSecurityMiddleware',
     # ...
 ]
 
@@ -88,7 +88,7 @@ from django.urls import include, path
 
 urlpatterns = [
     # Add this route to enable the session security endpoints
-    path('session_security/', include('django_session_security_continued.urls')),
+    path('session_security/', include('session_security.urls')),
     # ...
 ]
 ```

@@ -1,8 +1,8 @@
 from django import template
 from django.conf import settings
 
-from django_session_security_continued.settings import EXPIRE_AFTER
-from django_session_security_continued.settings import WARN_AFTER
+from session_security.settings import EXPIRE_AFTER
+from session_security.settings import WARN_AFTER
 
 
 register = template.Library()

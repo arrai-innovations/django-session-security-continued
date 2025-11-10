@@ -93,7 +93,7 @@ STATICFILES_FINDERS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = "0yv5dmym_%#=60h@_9qcp@*^+(towd1xic3bp-3&amp;ntjf!p&amp;7)y"
 TEMPLATE_DIRS = [
-    os.path.join(PROJECT_ROOT, "../django_session_security_continued/tests/project/templates"),
+    os.path.join(PROJECT_ROOT, "../session_security/tests/project/templates"),
     os.path.join(PROJECT_ROOT, "templates"),
 ]
 
@@ -119,11 +119,11 @@ MIDDLEWARE = (
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "django_session_security_continued.middleware.SessionSecurityMiddleware",
+    "session_security.middleware.SessionSecurityMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 )
 
-ROOT_URLCONF = "django_session_security_continued.tests.project.urls"
+ROOT_URLCONF = "session_security.tests.project.urls"
 
 LOGIN_URL = "/admin/"
 LOGOUT_URL = "/admin/logout/"
@@ -141,7 +141,7 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     # Uncomment the next line to enable the admin:
     "django.contrib.admin",
-    "django_session_security_continued",
+    "session_security",
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

@@ -4,7 +4,7 @@ attemps to provide.
 
 To install this middleware, add to ``settings.MIDDLEWARE``::
 
-    'django_session_security_continued.middleware.SessionSecurityMiddleware'
+    'session_security.middleware.SessionSecurityMiddleware'
 
 Place it after authentication middleware.
 """
@@ -18,8 +18,8 @@ from django.urls import resolve
 from django.urls import reverse
 from django.utils.deprecation import MiddlewareMixin
 
-from django_session_security_continued.utils import get_last_activity
-from django_session_security_continued.utils import set_last_activity
+from session_security.utils import get_last_activity
+from session_security.utils import set_last_activity
 
 
 class SessionSecurityMiddleware(MiddlewareMixin):
@@ -30,8 +30,8 @@ class SessionSecurityMiddleware(MiddlewareMixin):
 
     def is_passive_request(self, request):
         """Should we skip activity update on this URL/View."""
-        from django_session_security_continued.settings import PASSIVE_URL_NAMES as DEFAULT_PASSIVE_URL_NAMES
-        from django_session_security_continued.settings import PASSIVE_URLS as DEFAULT_PASSIVE_URLS
+        from session_security.settings import PASSIVE_URL_NAMES as DEFAULT_PASSIVE_URL_NAMES
+        from session_security.settings import PASSIVE_URLS as DEFAULT_PASSIVE_URLS
 
         passive_urls = getattr(
             django_settings,
@@ -59,7 +59,7 @@ class SessionSecurityMiddleware(MiddlewareMixin):
 
     def get_expire_seconds(self, request):
         """Return time (in seconds) before the user should be logged out."""
-        from django_session_security_continued.settings import EXPIRE_AFTER
+        from session_security.settings import EXPIRE_AFTER
 
         return EXPIRE_AFTER
 

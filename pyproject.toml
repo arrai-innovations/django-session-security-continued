@@ -124,14 +124,14 @@ ignore = [
     "S",
     "SIM",
 ]
-"django_session_security_continued/tests/project/settings.py" = ["S105"]
+"session_security/tests/project/settings.py" = ["S105"]
 "test_project/test_project/settings.py" = ["S105"]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 20
 
 [tool.ruff.lint.isort]
-known-first-party = ["django_session_security_continued"]
+known-first-party = ["session_security"]
 force-single-line = true
 lines-after-imports = 2
 
@@ -158,9 +158,9 @@ ignore-names = [
 [tool.pytest.ini_options]
 django_find_project = false
 pythonpath = ["."]
-DJANGO_SETTINGS_MODULE = "django_session_security_continued.tests.project.settings"
-addopts = "--ds=django_session_security_continued.tests.project.settings --reuse-db"
-testpaths = ["django_session_security_continued/tests"]
+DJANGO_SETTINGS_MODULE = "session_security.tests.project.settings"
+addopts = "--ds=session_security.tests.project.settings --reuse-db"
+testpaths = ["session_security/tests"]
 python_files = ["test_*.py"]
 markers = [
     "selenium: marks tests that require a browser",
@@ -169,7 +169,7 @@ markers = [
 [tool.coverage.run]
 branch = true
 parallel = true
-source = ["django_session_security_continued"]
+source = ["session_security"]
 omit = [
     "*/migrations/*",
 ]
@@ -189,10 +189,10 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["django_session_security_continued*"]
+include = ["session_security*"]
 
 [tool.setuptools.package-data]
-"django_session_security_continued" = [
+"session_security" = [
     "*.html",
     "*.css",
     "*.js",

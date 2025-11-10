@@ -1,7 +1,7 @@
 {
   "all": false,
   "include": [
-    "django_session_security_continued/static/session_security/script.js"
+    "session_security/static/session_security/script.js"
   ],
   "reporter": ["text-summary", "lcov"],
   "report-dir": "coverage-js"

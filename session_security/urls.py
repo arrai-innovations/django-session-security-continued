@@ -9,7 +9,7 @@ ie::
 
     urlpatterns = [
         # ....
-        path("session_security/", include("django_session_security_continued.urls")),
+        path("session_security/", include("session_security.urls")),
         # ....
     ]
 
@@ -17,7 +17,7 @@ ie::
 
 from django.urls import re_path
 
-from django_session_security_continued.views import PingView
+from session_security.views import PingView
 
 
 urlpatterns = [

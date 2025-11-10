@@ -86,8 +86,8 @@ def frozen_time(monkeypatch):
             self._current += timedelta(seconds=seconds)
 
     freezer = FrozenDateTime()
-    monkeypatch.setattr("django_session_security_continued.middleware.datetime", freezer)
-    monkeypatch.setattr("django_session_security_continued.views.datetime", freezer)
+    monkeypatch.setattr("session_security.middleware.datetime", freezer)
+    monkeypatch.setattr("session_security.views.datetime", freezer)
     return freezer
 
 
@@ -103,7 +103,7 @@ def selenium_browser(live_server, admin_user, settings):
     if use_js_coverage:
         settings.SESSION_SECURITY_JS_PATH = JS_COVERAGE_STATIC_PATH
         coverage_bundle = (
-            REPO_ROOT / "django_session_security_continued" / "static" / "session_security" / "coverage" / "script.js"
+            REPO_ROOT / "session_security" / "static" / "session_security" / "coverage" / "script.js"
         )
         if not coverage_bundle.exists():
             raise RuntimeError(

@@ -18,7 +18,7 @@ urlpatterns = [
     path("sleep/", login_required(SleepView.as_view(template_name="home.html")), name="sleep"),
     path("admin/", admin.site.urls),
     path("auth/", include("django.contrib.auth.urls")),
-    path("session_security/", include("django_session_security_continued.urls")),
+    path("session_security/", include("session_security.urls")),
     path("ignore/", login_required(generic.TemplateView.as_view(template_name="home.html")), name="ignore"),
     path(
         "passive/",

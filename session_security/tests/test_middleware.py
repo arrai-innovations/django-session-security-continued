@@ -4,8 +4,8 @@ from datetime import timedelta
 import pytest
 from django.test import override_settings
 
-from django_session_security_continued.utils import get_last_activity
-from django_session_security_continued.utils import set_last_activity
+from session_security.utils import get_last_activity
+from session_security.utils import set_last_activity
 
 
 pytestmark = pytest.mark.django_db

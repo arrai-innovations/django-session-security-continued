@@ -7,8 +7,8 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-from django_session_security_continued.settings import EXPIRE_AFTER
-from django_session_security_continued.settings import WARN_AFTER
+from session_security.settings import EXPIRE_AFTER
+from session_security.settings import WARN_AFTER
 
 
 WAIT_TIME = 5 if not os.environ.get("CI", False) else 30

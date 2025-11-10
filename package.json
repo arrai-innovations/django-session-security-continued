@@ -7,9 +7,9 @@
     "build:coverage": "COVERAGE=true vite build --mode coverage",
     "coverage:report": "nyc report --reporter=text-summary --reporter=lcov",
     "lint": "npm run lint:eslint && npm run lint:prettier",
-    "lint:eslint": "npx eslint django_session_security_continued/static/session_security",
-    "lint:prettier": "npx prettier --check django_session_security_continued/static/session_security",
-    "format": "npx prettier --write django_session_security_continued/static/session_security"
+    "lint:eslint": "npx eslint session_security/static/session_security",
+    "lint:prettier": "npx prettier --check session_security/static/session_security",
+    "format": "npx prettier --write session_security/static/session_security"
   },
   "repository": {
     "type": "git",

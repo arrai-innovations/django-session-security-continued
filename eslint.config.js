@@ -9,12 +9,12 @@ export default [
             "dist",
             ".nyc_output",
             "coverage-js",
-            "django_session_security_continued/static/session_security/coverage/**",
+            "session_security/static/session_security/coverage/**",
             ".venv/**",
         ],
     },
     {
-        files: ["django_session_security_continued/static/session_security/**/*.js"],
+        files: ["session_security/static/session_security/**/*.js"],
         languageOptions: {
             globals: {
                 ...globals.browser,

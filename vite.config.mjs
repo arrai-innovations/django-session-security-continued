@@ -4,8 +4,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const rootDir = fileURLToPath(new URL(".", import.meta.url));
-const entryFile = path.resolve(rootDir, "django_session_security_continued/static/session_security/script.js");
-const outDir = path.resolve(rootDir, "django_session_security_continued/static/session_security/coverage");
+const entryFile = path.resolve(rootDir, "session_security/static/session_security/script.js");
+const outDir = path.resolve(rootDir, "session_security/static/session_security/coverage");
 
 export default defineConfig(() => {
   const coverageEnabled = process.env.COVERAGE === "true";
@@ -25,7 +25,7 @@ export default defineConfig(() => {
     plugins: coverageEnabled
       ? [
           istanbul({
-            include: ["**/django_session_security_continued/static/session_security/**/*.js"],
+            include: ["**/session_security/static/session_security/**/*.js"],
             extension: [".js"],
             requireEnv: false,
             cypress: false,

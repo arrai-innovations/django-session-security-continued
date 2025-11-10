@@ -5,7 +5,7 @@ from datetime import datetime
 from django import http
 from django.views import generic
 
-from django_session_security_continued.utils import get_last_activity
+from session_security.utils import get_last_activity
 
 
 __all__ = [
