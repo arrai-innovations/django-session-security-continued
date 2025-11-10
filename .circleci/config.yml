@@ -128,10 +128,10 @@ workflows:
             - build:
                   name: build
                   requires:
-                      - python_3.9
-                      - python_3.10
-                      - python_3.11
-                      - python_3.12
+                      - python_3.9-no-badge
+                      - python_3.10-no-badge
+                      - python_3.11-no-badge
+                      - python_3.12-no-badge
                   filters:
                       tags:
                           only: /.*/
