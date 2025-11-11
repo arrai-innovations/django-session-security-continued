@@ -1,13 +1,8 @@
 # django-session-security-continued
 
-[![code style: ruff][]][ruff] [![code style: prettier][]][prettier] ![ruff status][] ![pip-audit status][]
-
-![python 3.9 status][]
-![python 3.10 status][]
-![python 3.11 status][]
-![python 3.12 status][]
-![python coverage status][]
-![javascript coverage status][]
+| Lint & Style | Tests | Coverage | Misc |
+|:-------------|:--------|:----------|:------|
+| [![code style: ruff][]][ruff] [![code style: prettier][]][prettier] | ![python 3.9 status][] ![python 3.10 status][] ![python 3.11 status][] ![python 3.12 status][] | ![python coverage status][] ![javascript coverage status][] | ![ruff status][] ![pip-audit status][] |
 
 <!--prettier-ignore-start-->
 <!--TOC-->
