@@ -2,7 +2,7 @@
 
 | Lint & Style | Tests | Coverage | Misc |
 |:-------------|:--------|:----------|:------|
-| [![code style: ruff][]][ruff] [![code style: prettier][]][prettier] | ![python 3.9 status][] ![python 3.10 status][] ![python 3.11 status][] ![python 3.12 status][] | ![python coverage status][] ![javascript coverage status][] | ![ruff status][] ![pip-audit status][] |
+| [![code style: ruff][]][ruff] [![code style: prettier][]][prettier] | ![python 3.9 status][] ![python 3.10 status][] ![python 3.11 status][] ![python 3.12 status][] ![javascript test status][] | ![python coverage status][] ![javascript coverage status][] | ![ruff status][] ![pip-audit status][] |
 
 <!--prettier-ignore-start-->
 <!--TOC-->
@@ -170,7 +170,8 @@ Contributions are welcome. Please fork the repository and create a pull request 
 [python 3.11 status]: https://docs.arrai.dev/dssc/artifacts/main/python_3.11.svg
 [python 3.12 status]: https://docs.arrai.dev/dssc/artifacts/main/python_3.12.svg
 [python coverage status]: https://docs.arrai.dev/dssc/artifacts/main/python_3.9.coverage.svg
-[javascript coverage status]: https://docs.arrai.dev/dssc/artifacts/main/js-coverage.svg
+[javascript coverage status]: https://docs.arrai.dev/dssc/artifacts/main/javascript-coverage.svg
+[javascript test status]: https://docs.arrai.dev/dssc/artifacts/main/javascript-tests.svg
 [ruff status]: https://docs.arrai.dev/dssc/artifacts/main/ruff.svg
 [pipenv]: https://github.com/pypa/pipenv
 [pip-audit status]: https://docs.arrai.dev/dssc/artifacts/main/pip-audit.svg
