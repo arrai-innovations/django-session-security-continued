@@ -2,7 +2,7 @@
 
 | Lint & Style | Tests | Coverage | Misc |
 |:-------------|:--------|:----------|:------|
-| [![code style: ruff][]][ruff] [![code style: prettier][]][prettier] | ![python 3.9 status][] ![python 3.10 status][] ![python 3.11 status][] ![python 3.12 status][] ![javascript test status][] | ![python coverage status][] ![javascript coverage status][] | ![ruff status][] ![pip-audit status][] |
+| [![code style: ruff][]][ruff]<br>[![code style: prettier][]][prettier] | ![python 3.9 status][]<br>![python 3.10 status][]<br>![python 3.11 status][]<br>![python 3.12 status][]<br>![javascript test status][] | ![python coverage status][]<br>![javascript coverage status][] | ![ruff status][]<br>![pip-audit status][] |
 
 <!--prettier-ignore-start-->
 <!--TOC-->
