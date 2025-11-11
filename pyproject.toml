@@ -4,7 +4,6 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "django-session-security-continued"
-version = "3.0.0a2"
 description = "Client and server-side session timeout enforcement with warnings for Django 4.2+."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -55,6 +54,7 @@ classifiers = [
 dependencies = [
     "django>=4.2,<5.3",
 ]
+dynamic = ["version"]
 
 [project.urls]
 repository = "https://github.com/arrai-innovations/django-session-security-continued"
@@ -206,6 +206,9 @@ exclude_lines = [
 [tool.setuptools]
 package-dir = { "" = "." }
 include-package-data = true
+
+[tool.setuptools.dynamic]
+version = { attr = "session_security.__version__" }
 
 [tool.setuptools.packages.find]
 where = ["."]

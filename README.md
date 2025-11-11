@@ -2,7 +2,7 @@
 
 | Lint & Style | Tests | Coverage | Misc |
 |:-------------|:--------|:----------|:------|
-| [![code style: ruff][]][ruff]<br>[![code style: prettier][]][prettier] | ![python 3.9 status][]<br>![python 3.10 status][]<br>![python 3.11 status][]<br>![python 3.12 status][]<br>![javascript test status][] | ![python coverage status][]<br>![javascript coverage status][] | ![ruff status][]<br>![pip-audit status][] |
+| [![code style: ruff][]][ruff]<br>[![code style: prettier][]][prettier] | ![python 3.9 status][]<br>![python 3.10 status][]<br>![python 3.11 status][]<br>![python 3.12 status][]<br>![javascript test status][] | ![python coverage status][]<br>![javascript coverage status][] | [![pypi: badge][]][pypi]<br>![ruff status][]<br>![pip-audit status][] |
 
 <!--prettier-ignore-start-->
 <!--TOC-->
@@ -175,3 +175,5 @@ Contributions are welcome. Please fork the repository and create a pull request 
 [ruff status]: https://docs.arrai.dev/dssc/artifacts/main/ruff.svg
 [pipenv]: https://github.com/pypa/pipenv
 [pip-audit status]: https://docs.arrai.dev/dssc/artifacts/main/pip-audit.svg
+[pypi]: https://pypi.org/project/django-session-security-continued/
+[pypi: badge]: https://img.shields.io/pypi/v/django-session-security-continued?style=for-the-badge&logo=PyPI&logoColor=white
