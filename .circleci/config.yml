@@ -20,6 +20,25 @@ jobs:
         steps:
             - checkout
             - run:
+                  name: Verify Git Tag Matches Python Version
+                  command: |
+                      GIT_TAG=$(git describe --tags --exact-match 2>/dev/null)
+
+                      if [ $? -ne 0 ]; then
+                        echo "No exact match Git tag found."
+                        exit 1
+                      fi
+
+                      PYTHON_VERSION=$(python -c "import session_security; print(session_security.__version__)")
+
+                      if [ "$GIT_TAG" == "v$PYTHON_VERSION" ]; then
+                        echo "Git tag matches the Python version: $GIT_TAG"
+                        exit 0
+                      else
+                        echo "Git tag ($GIT_TAG) does not match the Python version ($PYTHON_VERSION)."
+                        exit 1
+                      fi
+            - run:
                   name: Build Package
                   command: uv build
             - save_cache:
