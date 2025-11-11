@@ -26,7 +26,7 @@ jobs:
                   paths:
                       - ~/project/dist
                   key: build-{{ arch }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}
-    js_coverage:
+    js_tests:
         executor: python39
         resource_class: small
         circleci_ip_ranges: true
@@ -75,20 +75,37 @@ jobs:
                       - utils/rsync_file:
                             when: always
                             file: /tmp/coverage.svg
-                            remote_file: ${CIRCLE_BRANCH}/${CIRCLE_JOB}.svg
+                            remote_file: ${CIRCLE_BRANCH}/${CIRCLE_JOB}-coverage.svg
+                            host: docs
+                      - utils/make_status_shield:
+                            logo: JavaScript
+                            when: on_success
+                            status: passed
+                            color: brightgreen
+                            file: ~/status.svg
+                      - utils/make_status_shield:
+                            logo: JavaScript
+                            when: on_fail
+                            status: failed
+                            color: red
+                            file: ~/status.svg
+                      - utils/rsync_file:
+                            when: always
+                            file: ~/status.svg
+                            remote_file: ${CIRCLE_BRANCH}/${CIRCLE_JOB}-tests.svg
                             host: docs
 workflows:
     test:
         jobs:
-            - js_coverage:
-                  name: js-coverage
+            - js_tests:
+                  name: javascript
                   context: arrai-global
                   filters:
                       branches:
                           only:
                               - main
-            - js_coverage:
-                  name: js-coverage-no-badge
+            - js_tests:
+                  name: javascript-no-badge
                   context: arrai-global
                   create_badges: false
                   filters:
@@ -199,6 +216,7 @@ workflows:
             - build:
                   name: build
                   requires:
+                      - javascript-no-badge
                       - python_3.9-no-badge
                       - python_3.10-no-badge
                       - python_3.11-no-badge
