@@ -20,13 +20,32 @@ jobs:
         steps:
             - checkout
             - run:
+                  name: Verify Git Tag Matches Python Version
+                  command: |
+                      GIT_TAG=$(git describe --tags --exact-match 2>/dev/null)
+
+                      if [ $? -ne 0 ]; then
+                        echo "No exact match Git tag found."
+                        exit 1
+                      fi
+
+                      PYTHON_VERSION=$(python -c "import session_security; print(session_security.__version__)")
+
+                      if [ "$GIT_TAG" == "v$PYTHON_VERSION" ]; then
+                        echo "Git tag matches the Python version: $GIT_TAG"
+                        exit 0
+                      else
+                        echo "Git tag ($GIT_TAG) does not match the Python version ($PYTHON_VERSION)."
+                        exit 1
+                      fi
+            - run:
                   name: Build Package
                   command: uv build
             - save_cache:
                   paths:
                       - ~/project/dist
-                  key: build-{{ arch }}-{{ .Environment.CIRCLE_SHA1 }}
-    js_coverage:
+                  key: build-{{ arch }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}
+    js_tests:
         executor: python39
         resource_class: small
         circleci_ip_ranges: true
@@ -75,20 +94,37 @@ jobs:
                       - utils/rsync_file:
                             when: always
                             file: /tmp/coverage.svg
-                            remote_file: ${CIRCLE_BRANCH}/${CIRCLE_JOB}.svg
+                            remote_file: ${CIRCLE_BRANCH}/${CIRCLE_JOB}-coverage.svg
+                            host: docs
+                      - utils/make_status_shield:
+                            logo: JavaScript
+                            when: on_success
+                            status: passed
+                            color: brightgreen
+                            file: ~/status.svg
+                      - utils/make_status_shield:
+                            logo: JavaScript
+                            when: on_fail
+                            status: failed
+                            color: red
+                            file: ~/status.svg
+                      - utils/rsync_file:
+                            when: always
+                            file: ~/status.svg
+                            remote_file: ${CIRCLE_BRANCH}/${CIRCLE_JOB}-tests.svg
                             host: docs
 workflows:
     test:
         jobs:
-            - js_coverage:
-                  name: js-coverage
+            - js_tests:
+                  name: javascript
                   context: arrai-global
                   filters:
                       branches:
                           only:
                               - main
-            - js_coverage:
-                  name: js-coverage-no-badge
+            - js_tests:
+                  name: javascript-no-badge
                   context: arrai-global
                   create_badges: false
                   filters:
@@ -199,6 +235,7 @@ workflows:
             - build:
                   name: build
                   requires:
+                      - javascript-no-badge
                       - python_3.9-no-badge
                       - python_3.10-no-badge
                       - python_3.11-no-badge
