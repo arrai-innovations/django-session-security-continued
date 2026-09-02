@@ -247,7 +247,7 @@ workflows:
                           ignore: /.*/
             - pypi/upload_release:
                   name: publish
-                  cache_key: build-{{ arch }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}
+                  cache_key: build-{{ arch }}-{{ .Environment.CIRCLE_SHA1 }}
                   context: arrai-public-package-publishing
                   requires:
                       - build
